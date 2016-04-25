@@ -1,0 +1,12 @@
+
+This a simple sparse library for teaching purposes. It includes sparse matrix
+storage formats, operations on said formats and solvers for said formats.
+
+To get started you need
+    * a C build environment and
+    * a "make" tool.
+
+Before building, checkout the files options.inc and system.inc for compilation
+and system settings.
+
+git it, make it and have fun!
