@@ -1,5 +1,5 @@
 /**
- *  Setting up and working with sparse COO matrices
+ *  Setting up and working with sparse CRS matrices
  */
 
 #include <assert.h>
@@ -7,16 +7,16 @@
 #include <stdlib.h>
 
 #include "settings.h"
-#include "coo.h"
+#include "crs.h"
 #include "realvector.h"
-#include "gecoomv.h"
+#include "gecrsmv.h"
 
 void
-setupdense_coo(pcoo A);
+setupdense_crs(pcrs A);
 
 
 void
-adddense_coo(pcoo A);
+adddense_crs(pcrs A);
 
 
 int
@@ -32,18 +32,18 @@ main(int argc, char **argv)
     index min = (rows<cols) ? rows : cols;
     real alpha = 2., beta = 0.5;
 
-    pcoo A = new_coo(0, 0, 0);
-    resize_coo(A, 3*min-2, rows, cols);
+    pcrs A = new_crs(0, 0, 0);
+    resize_crs(A, 3*min-2, rows, cols);
 
-    setupdense_coo(A);
-    adddense_coo(A);
-    setentry_coo(A, rows/2, 1, 3);
-    setentry_coo(A, rows/2, cols-1, -0.5);
-    setentry_coo(A, 2, cols/2, -0.5);
+    setupdense_crs(A);
+    adddense_crs(A);
+    setentry_crs(A, rows/2, 1, 3);
+    setentry_crs(A, rows/2, cols-1, -0.5);
+    setentry_crs(A, 2, cols/2, -0.5);
 
-    printdense_coo(A);
+    printdense_crs(A);
     (void) printf("A =\n");
-    print_coo(A);
+    print_crs(A);
 
     prealvector x = new_realvector(rows);
     resize_realvector(x, rows);
@@ -65,53 +65,57 @@ main(int argc, char **argv)
     (void) printf("\ny =\n");
     print_realvector(y);
 
-    gecoomv(t, alpha, A, x, beta, y);
+    gecrsmv(t, alpha, A, x, beta, y);
 
     (void) printf("\nalpha*Op(A)*x + beta*y =\n");
     print_realvector(y);
 
     del_realvector(x);
     del_realvector(y);
-    del_coo(A);
+    del_crs(A);
 
     return 0;
 }
 
 
 void
-setupdense_coo(pcoo A)
+setupdense_crs(pcrs A)
 {
     assert(A);
     index min = (A->numr<A->numc) ? A->numr : A->numc;
     assert(A->nonz==3*min-2);
+    assert(A->nonz>2);
 
     index i;
 
-    for (i=0; i<A->nonz-4; ++i) {
-        A->rows[i+2] = i/3+INDEX_BASE+1;
-        A->cols[i+2] = i%3+INDEX_BASE+i/3;
+    for (i=0; i<A->numr; ++i) {
+        if (i==0) {
+            A->rowptr[i]   = 0;
+            A->rowptr[i+1] = 2;
+        } else if (i+1>=min) {
+            A->rowptr[i+1] = A->nonz;
+        } else {
+            A->rowptr[i+1] = A->rowptr[i]+3;
+        }
     }
 
-    A->rows[0]          = 0+INDEX_BASE;
-    A->rows[1]          = 0+INDEX_BASE;
-    A->rows[A->nonz-2]  = min+INDEX_BASE-1;
-    A->rows[A->nonz-1]  = min+INDEX_BASE-1;
-
-    A->cols[0]          = 0+INDEX_BASE;
-    A->cols[1]          = 1+INDEX_BASE;
-    A->cols[A->nonz-2]  = min+INDEX_BASE-2;
-    A->cols[A->nonz-1]  = min+INDEX_BASE-1;
+    A->colind[0] = 0+INDEX_BASE;
+    A->colind[1] = 1+INDEX_BASE;
+    A->colind[2] = 0+INDEX_BASE;
+    for (i=3; i<A->nonz; ++i) {
+        A->colind[i] = A->colind[i-3]+1;
+    }
 
     for (i=INDEX_BASE; i<min+INDEX_BASE; ++i) {
-        setentry_coo(A, i, i, 2);
-        if (i>INDEX_BASE) setentry_coo(A, i, i-1, -0.5);
-        if (i+1<min+INDEX_BASE) setentry_coo(A, i, i+1, -0.5);
+        setentry_crs(A, i, i, 2);
+        if (i>INDEX_BASE) setentry_crs(A, i, i-1, -0.5);
+        if (i+1<min+INDEX_BASE) setentry_crs(A, i, i+1, -0.5);
     }
 }
 
 
 void
-adddense_coo(pcoo A)
+adddense_crs(pcrs A)
 {
     assert(A);
     index min = (A->numr<A->numc) ? A->numr : A->numc;
@@ -120,9 +124,9 @@ adddense_coo(pcoo A)
     index i;
 
     for (i=INDEX_BASE; i<min+INDEX_BASE; ++i) {
-        addentry_coo(A, i, i, 2);
-        if (i>INDEX_BASE) addentry_coo(A, i, i-1, -0.5);
-        if (i+1<min+INDEX_BASE) addentry_coo(A, i, i+1, -0.5);
+        addentry_crs(A, i, i, 2);
+        if (i>INDEX_BASE) addentry_crs(A, i, i-1, -0.5);
+        if (i+1<min+INDEX_BASE) addentry_crs(A, i, i+1, -0.5);
     }
 }
 

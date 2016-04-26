@@ -5,10 +5,12 @@
 
 ULMSP_STORAGE = \
 	Lib/storage/coo.c \
+	Lib/storage/crs.c \
 	Lib/storage/realvector.c \
 
 ULMSP_OPS= \
 	Lib/ops/gecoomv.c \
+	Lib/ops/gecrsmv.c \
 
 ULMSP_SOLVERS= \
 
@@ -29,6 +31,8 @@ DEPENDENCIES_libulmsp := $(SOURCES_libulmsp:.c=.d)
 
 SOURCES_stable := \
 	Tests/setup_coo.c \
+	Tests/setup_crs.c \
+	Tests/laplace_crs.c \
 
 SOURCES_tests = $(SOURCES_stable) \
 

@@ -11,4 +11,4 @@ DEBUG=1
 #OPT=1
 
 # Index base
-BASE=0
+BASE=1
