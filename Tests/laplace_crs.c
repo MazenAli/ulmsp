@@ -11,6 +11,7 @@
 #include "settings.h"
 #include "crs.h"
 #include "gecrsmv.h"
+#include "cgcrs.h"
 
 void
 assemble_laplace(pcrs A, index N);
@@ -19,31 +20,58 @@ assemble_laplace(pcrs A, index N);
 int
 main(int argc, char **argv)
 {
-    if (argc!=2) {
-        (void) fprintf(stderr, "Usage: ./main N\n");
+    if (argc!=4) {
+        (void) fprintf(stderr, "Usage: ./main N maxit print(1/0)\n");
         return 1;
     }
 
-    int N = atoi(argv[1]);
+    int N     = atoi(argv[1]); ///< Nodes in each dimension
+    int maxit = atoi(argv[2]); ///< Maximum iteration number for CG
+    int print = atoi(argv[3]); ///< Print output: set to 0 for big N
 
     index i;
-    real alpha = 1., beta = 0.;
+    real alpha = 1., beta = 0.; ///< gecrsmv parameters
+    real tol = 1e-8;            ///< CG tolerance
+    index it;
 
+    /// Assemble and print stiffness matrix
     pcrs A = new_crs(0, 0, 0);
     assemble_laplace(A, N);
-    (void) printf("A =\n");
-    printdense_crs(A);
 
+    if (print) {
+        (void) printf("A =\n");
+        printdense_crs(A);
+    }
+
+    /// Set up, perform and print y <- alpha*A*x+beta*y
     prealvector x = new_realvector(N*N);
     prealvector y = new_realvector(N*N);
+
     transpose t = notrans;
+
     for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
         setentry_realvector(x, i, 1.);
     }
+
     gecrsmv(t, alpha, A, x, beta, y);
 
-    (void) printf("y = A*ones =\n");
-    print_realvector(y);
+    if (print) {
+        (void) printf("y = A*ones =\n");
+        print_realvector(y);
+    }
+
+    /// Apply CG solver
+    it = cgcrs(A, y, x, tol, maxit);
+
+    (void) printf("Solution after %ld iterations\n", it);
+    if (print) {
+        (void) printf("x =\n");
+        print_realvector(y);
+    }
+
+    del_crs(A);
+    del_realvector(x);
+    del_realvector(y);
 
     return 0;
 }

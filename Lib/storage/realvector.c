@@ -1,9 +1,18 @@
 #ifndef REALVECTOR_C
 #define REALVECTOR_C
 
+#ifdef USE_BLAS
+    #include <blas.h>
+#endif
+
+#ifdef USE_CBLAS
+    #include <cblas.h>
+#endif
+
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "realvector.h"
 
@@ -45,12 +54,15 @@ resize_realvector(prealvector x, index length)
 void
 copy_realvector(prealvector dest, pcrealvector src)
 {
+    assert(dest);
     assert(src);
 
     index i;
 
-    if (dest) del_realvector(dest);
-    init_realvector(dest, src->length);
+    if (dest->length!=src->length) {
+        del_realvector(dest);
+        init_realvector(dest, src->length);
+    }
 
     for (i=INDEX_BASE; i<src->length+INDEX_BASE; ++i) {
         setentry_realvector(dest, i, getentry_realvector(src, i));
@@ -108,6 +120,117 @@ print_realvector(pcrealvector x)
     for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
         (void) printf("%8.4f\n", getentry_realvector(x, i));
     }
+}
+
+
+void
+scal_realvector(real alpha, prealvector x)
+{
+    assert(x);
+
+    #ifdef USE_BLAS
+        int N   = x->length;
+        int one = 1;
+        dscal_(&N, &alpha, x->vals, &one);
+
+    #elif defined(USE_CBLAS)
+        int N   = x->length;
+        cblas_dscal(N, alpha, x->vals, 1);
+
+    #else
+        index i;
+        for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
+            setentry_realvector(x, i,
+                                alpha*getentry_realvector(x, i));
+        }
+    #endif
+}
+
+
+real
+dot_realvector(pcrealvector x, pcrealvector y)
+{
+    assert(x);
+    assert(y);
+    assert(x->length==y->length);
+
+    #ifdef USE_BLAS
+        int N   = x->length;
+        int one = 1;
+
+        return ddot_(&N, x->vals, &one, y->vals, &one);
+
+    #elif defined(USE_CBLAS)
+        int N = x->length;
+
+        return cblas_ddot(N, x->vals, 1, y->vals, 1);
+
+    #else
+        index i;
+        real ret = 0.;
+
+        for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
+            ret += getentry_realvector(x, i)*getentry_realvector(y, i);
+        }
+
+        return ret;
+    #endif
+}
+
+
+real
+nrm2_realvector(pcrealvector x)
+{
+    assert(x);
+
+    #ifdef USE_BLAS
+        int N   = x->length;
+        int one = 1;
+
+        return dnrm2_(&N, x->vals, &one);
+
+    #elif defined(USE_CBLAS)
+        int N = x->length;
+
+        return cblas_dnrm2(N, x->vals, 1);
+
+    #else
+        index i;
+        real ret = 0.;
+        for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
+            ret += getentry_realvector(x, i)*getentry_realvector(x, i);
+        }
+
+        return sqrt(ret);
+    #endif
+}
+
+
+void
+axpy_realvector(real alpha, pcrealvector x, prealvector y)
+{
+    assert(x);
+    assert(y);
+    assert(x->length==y->length);
+
+    #ifdef USE_BLAS
+        int N   = x->length;
+        int one = 1;
+        daxpy_(&N, &alpha, x->vals, &one, y->vals, &one);
+
+    #elif defined(USE_CBLAS)
+        int N = x->length;
+        cblas_daxpy(N, alpha, x->vals, 1, y->vals, 1);
+
+    #else
+        index i;
+
+        for (i=INDEX_BASE; i<y->length+INDEX_BASE; ++i) {
+            setentry_realvector(y, i,
+                                alpha*getentry_realvector(x, i)+
+                                getentry_realvector(y, i));
+        }
+    #endif
 }
 
 #endif

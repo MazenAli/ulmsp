@@ -14,9 +14,12 @@ gecrsmv(transpose t,
         real beta,
         prealvector y)
 {
+    /// Input parsing
     assert(A);
     assert(x);
     assert(y);
+
+    index i, j;
 
     if (t==notrans) {
         assert(A->numc==x->length);
@@ -28,13 +31,10 @@ gecrsmv(transpose t,
         fprintf(stderr, "Transpose type unknown.\n");
     }
 
-    index i, j;
+    /// Scale y
+    scal_realvector(beta, y);
 
-    for (i=INDEX_BASE; i<y->length+INDEX_BASE; ++i) {
-        setentry_realvector(y, i,
-                            beta*getentry_realvector(y, i));
-    }
-
+    /// Perform y <- alpha*A*x + y
     for (i=0; i<A->numr; ++i) {
         for(j=A->rowptr[i]; j<A->rowptr[i+1]; ++j) {
             if (t==notrans) {

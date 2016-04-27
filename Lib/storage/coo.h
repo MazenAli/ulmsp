@@ -14,12 +14,12 @@ typedef const coo   *pccoo;
 
 struct _coo
 {
-    real    *vals;
-    index    *rows;
-    index    *cols;
-    index    nonz;
-    index    numr;
-    index    numc;
+    real    *vals;  ///< Pointer to matrix entries
+    index    *rows; ///< Pointer to row indices
+    index    *cols; ///< Pointer to column indices
+    index    nonz;  ///< Number of non zeros
+    index    numr;  ///< Number of rows
+    index    numc;  ///< Number of columns
 };
 
 /**

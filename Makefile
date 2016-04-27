@@ -13,6 +13,7 @@ ULMSP_OPS= \
 	Lib/ops/gecrsmv.c \
 
 ULMSP_SOLVERS= \
+	Lib/solvers/cgcrs.c \
 
 SOURCES_libulmsp := \
 	$(ULMSP_STORAGE) \
@@ -32,6 +33,7 @@ DEPENDENCIES_libulmsp := $(SOURCES_libulmsp:.c=.d)
 SOURCES_stable := \
 	Tests/setup_coo.c \
 	Tests/setup_crs.c \
+	Tests/setup_realvector.c \
 	Tests/laplace_crs.c \
 
 SOURCES_tests = $(SOURCES_stable) \

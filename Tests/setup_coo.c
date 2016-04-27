@@ -1,5 +1,5 @@
 /**
- *  Setting up and working with sparse COO matrices
+ *  Setting up and working with sparse COO matrices.
  */
 
 #include <assert.h>
@@ -11,10 +11,12 @@
 #include "realvector.h"
 #include "gecoomv.h"
 
+/// Fill COO matrix A with some values
 void
 setupdense_coo(pcoo A);
 
 
+/// Add to COO matrix A some values
 void
 adddense_coo(pcoo A);
 
@@ -30,8 +32,9 @@ main(int argc, char **argv)
     int rows = atoi(argv[1]);
     int cols = atoi(argv[2]);
     index min = (rows<cols) ? rows : cols;
-    real alpha = 2., beta = 0.5;
+    real alpha = 2., beta = 0.5; ///< gecoomv parameters
 
+    /// Set up, resize and change entries of COO matrix A
     pcoo A = new_coo(0, 0, 0);
     resize_coo(A, 3*min-2, rows, cols);
 
@@ -45,6 +48,7 @@ main(int argc, char **argv)
     (void) printf("A =\n");
     print_coo(A);
 
+    /// Set up, resize and change entries of vector x
     prealvector x = new_realvector(rows);
     resize_realvector(x, rows);
 
@@ -56,7 +60,7 @@ main(int argc, char **argv)
     (void) printf("\nx =\n");
     print_realvector(x);
 
-    transpose t   = trans;
+    /// Set up, resize and change entries of vector x
     prealvector y = new_realvector(cols);
     setentry_realvector(y, INDEX_BASE, 1.);
     setentry_realvector(y, INDEX_BASE+1, 0.5);
@@ -65,6 +69,8 @@ main(int argc, char **argv)
     (void) printf("\ny =\n");
     print_realvector(y);
 
+    /// Perform y <- alpha*A^T*x+beta*y
+    transpose t   = trans;
     gecoomv(t, alpha, A, x, beta, y);
 
     (void) printf("\nalpha*Op(A)*x + beta*y =\n");

@@ -14,9 +14,12 @@ gecoomv(transpose t,
         real beta,
         prealvector y)
 {
+    /// Input parsing
     assert(A);
     assert(x);
     assert(y);
+
+    index i;
 
     if (t==notrans) {
         assert(A->numc==x->length);
@@ -28,13 +31,10 @@ gecoomv(transpose t,
         fprintf(stderr, "Transpose type unknown.\n");
     }
 
-    index i;
+    /// Scale y
+    scal_realvector(beta, y);
 
-    for (i=INDEX_BASE; i<y->length+INDEX_BASE; ++i) {
-        setentry_realvector(y, i,
-                            beta*getentry_realvector(y, i));
-    }
-
+    /// Perform y <- alpha*A*x + y
     for (i=0; i<A->nonz; ++i) {
         if (t==notrans) {
             addentry_realvector(y,
