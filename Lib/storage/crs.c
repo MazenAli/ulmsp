@@ -139,17 +139,15 @@ init_coo2crs(pcrs A, pccoo C)
         return;
     }
 
-    /// Eliminate repitions
+    /// Eliminate repetitions
     A->vals      = (real*)  malloc(A->nonz*sizeof(real));
-    A->rowptr    = (index*) malloc((A->numr+1)*sizeof(index));
     A->colind    = (index*) malloc(A->nonz*sizeof(index));
-    A->rowptr[0] = 0;
 
     currentrow = 0;
     offset     = 0;
     for (k=0; k<C->nonz; ++k) {
         if (k==rowptr[currentrow+1]) {
-            A->rowptr[currentrow+1] = rowptr[currentrow+1]-offset;
+            rowptr[currentrow+1] -= offset;
             ++currentrow;
         }
 
@@ -161,10 +159,10 @@ init_coo2crs(pcrs A, pccoo C)
             A->colind[k-offset] = colind[k];
         }
     }
-    A->rowptr[A->numr] = rowptr[A->numr]-offset;
+    rowptr[A->numr] -= offset;
+    A->rowptr = rowptr;
 
     free(vals);
-    free(rowptr);
     free(colind);
     free(flags);
 }
