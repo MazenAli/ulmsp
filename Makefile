@@ -103,9 +103,9 @@ programs: $(PROGRAMS_tests)
 $(PROGRAMS_tests): %: %.o
 ifdef BRIEF_OUTPUT
 	@echo Linking $@
-	@$(CC) $(LDFLAGS) -Wl,-L,.,-R,. $< -o $@ -lulmsp $(LIBS)
+	@$(CC) $(LDFLAGS) -Wl,-L,.,-rpath,. $< -o $@.out -lulmsp $(LIBS)
 else
-	$(CC) $(LDFLAGS) -Wl,-L,.,-R,. $< -o $@ -lulmsp $(LIBS)
+	$(CC) $(LDFLAGS) -Wl,-L,.,-rpath,. $< -o $@.out -lulmsp $(LIBS)
 endif
 
 $(PROGRAMS_tests) $(PROGRAMS_tools): libulmsp.a
