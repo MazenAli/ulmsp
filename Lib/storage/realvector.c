@@ -12,6 +12,12 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+/// Conflicting typedefs for "index"
+#define index string_index
+    #include <string.h>
+#undef index
+
 #include <math.h>
 
 #include "realvector.h"
@@ -57,16 +63,12 @@ copy_realvector(prealvector dest, pcrealvector src)
     assert(dest);
     assert(src);
 
-    index i;
-
     if (dest->length!=src->length) {
         del_realvector(dest);
         init_realvector(dest, src->length);
     }
 
-    for (i=INDEX_BASE; i<src->length+INDEX_BASE; ++i) {
-        setentry_realvector(dest, i, getentry_realvector(src, i));
-    }
+    memcpy(dest->vals, src->vals, dest->length*sizeof(real));
 }
 
 
@@ -139,9 +141,14 @@ scal_realvector(real alpha, prealvector x)
 
     #else
         index i;
-        for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
-            setentry_realvector(x, i,
-                                alpha*getentry_realvector(x, i));
+
+        if (alpha==(real) 0) {
+            memset(x->vals, 0, x->length*sizeof(real));
+        } else {
+            for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
+                setentry_realvector(x, i,
+                                    alpha*getentry_realvector(x, i));
+            }
         }
     #endif
 }
@@ -225,10 +232,12 @@ axpy_realvector(real alpha, pcrealvector x, prealvector y)
     #else
         index i;
 
-        for (i=INDEX_BASE; i<y->length+INDEX_BASE; ++i) {
-            setentry_realvector(y, i,
-                                alpha*getentry_realvector(x, i)+
-                                getentry_realvector(y, i));
+        if (alpha!=(real) 0) {
+            for (i=INDEX_BASE; i<y->length+INDEX_BASE; ++i) {
+                setentry_realvector(y, i,
+                                    alpha*getentry_realvector(x, i)+
+                                    getentry_realvector(y, i));
+            }
         }
     #endif
 }

@@ -35,6 +35,7 @@ SOURCES_stable := \
 	Tests/setup_crs.c \
 	Tests/setup_realvector.c \
 	Tests/laplace_crs.c \
+	Tests/coo2crs.c \
 
 SOURCES_tests = $(SOURCES_stable) \
 

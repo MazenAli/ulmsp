@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include <assert.h>
 
+/// Conflicting typedefs for "index"
+#define index string_index
+    #include <string.h>
+#undef index
+
 #include "crs.h"
 
 pcrs
@@ -15,6 +20,19 @@ new_crs(index nonz, index numr, index numc)
     pcrs A;
     A = (pcrs) malloc(sizeof(crs));
     init_crs(A, nonz, numr, numc);
+
+    return A;
+}
+
+
+pcrs
+new_coo2crs(pccoo C)
+{
+    assert(C);
+
+    pcrs A;
+    A = (pcrs) malloc(sizeof(crs));
+    init_coo2crs(A, C);
 
     return A;
 }
@@ -42,6 +60,113 @@ init_crs(pcrs A, index nonz, index numr, index numc)
     A->nonz = nonz;
     A->numr = numr;
     A->numc = numc;
+}
+
+
+void
+init_coo2crs(pcrs A, pccoo C)
+{
+    assert(A);
+    assert(C);
+
+    /// In case C empty
+    if (!C->nonz) {
+        A->vals   = NULL;
+        A->rowptr = NULL;
+        A->colind = NULL;
+        A->nonz   = 0;
+        A->numr   = C->numr;
+        A->numc   = C->numc;
+
+        return;
+    }
+
+    index k, i;
+    index currentrow, offset;
+    index *rowptr, *colind;
+    real  *vals;
+    int   *flags;
+
+    /// Set meta data
+    A->numr = C->numr;
+    A->numc = C->numc;
+
+    vals   = (real*)  malloc(C->nonz*sizeof(real));
+    rowptr = (index*) malloc((A->numr+1)*sizeof(index));
+    colind = (index*) malloc(C->nonz*sizeof(index));
+    flags  = (int*)  malloc(C->nonz*sizeof(int));
+    memset(rowptr, 0, (A->numr+1)*sizeof(index));
+    memset(flags, 0, C->nonz*sizeof(int));
+
+    /// Count number of each row
+    for (k=0; k<C->nonz; ++k) {
+        ++rowptr[C->rows[k]-INDEX_BASE+1];
+    }
+
+    /// Accumulate
+    for (k=1; k<A->numr; ++k) {
+        rowptr[k+1] += rowptr[k];
+    }
+
+    /// Add and flag repetitions
+    for (k=0; k<C->nonz; ++k) {
+        for (i=rowptr[C->rows[k]-INDEX_BASE];
+             i<rowptr[C->rows[k]-INDEX_BASE+1]; ++i) {
+
+            if (flags[i]) {
+                if (C->cols[k]==colind[i]) {
+                    vals[i] += C->vals[k];
+                    break;
+                }
+            } else {
+                ++A->nonz;
+                flags[i]  = 1;
+                colind[i] = C->cols[k];
+                vals[i]   = C->vals[k];
+                break;
+            }
+        }
+    }
+
+
+    /// No repetitions
+    if (A->nonz==C->nonz) {
+        A->vals   = vals;
+        A->rowptr = rowptr;
+        A->colind = colind;
+        free(flags);
+
+        return;
+    }
+
+    /// Eliminate repitions
+    A->vals      = (real*)  malloc(A->nonz*sizeof(real));
+    A->rowptr    = (index*) malloc((A->numr+1)*sizeof(index));
+    A->colind    = (index*) malloc(A->nonz*sizeof(index));
+    A->rowptr[0] = 0;
+
+    currentrow = 0;
+    offset     = 0;
+    for (k=0; k<C->nonz; ++k) {
+        if (k==rowptr[currentrow+1]) {
+            A->rowptr[currentrow+1] = rowptr[currentrow+1]-offset;
+            ++currentrow;
+        }
+
+        if (!flags[k]) {
+            offset += rowptr[currentrow+1]-k;
+            k       = rowptr[currentrow+1]-1;
+        } else {
+            A->vals[k-offset]   = vals[k];
+            A->colind[k-offset] = colind[k];
+        }
+    }
+    A->rowptr[A->numr] = rowptr[A->numr]-offset;
+
+    free(vals);
+    free(rowptr);
+    free(colind);
+    free(flags);
 }
 
 

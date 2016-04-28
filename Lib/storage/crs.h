@@ -7,6 +7,7 @@
 #define CRS_H
 
 #include "../settings.h"
+#include "coo.h"
 
 typedef struct _crs crs;
 typedef crs         *pcrs;
@@ -29,8 +30,14 @@ struct _crs
 pcrs
 new_crs(index nonz, index numr, index numc);
 
+pcrs
+new_coo2crs(pccoo C);
+
 void
 init_crs(pcrs A, index nonz, index numr, index numc);
+
+void
+init_coo2crs(pcrs A, pccoo C);
 
 void
 resize_crs(pcrs A, index nonz, index numr, index numc);
