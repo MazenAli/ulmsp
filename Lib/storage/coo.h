@@ -1,7 +1,6 @@
-/**
- *  Coordinate list (COO) sparse matrix storage format.
- *  Assumes row sorting of entries.
- */
+/** @file coo.h
+ *  @author Mazen Ali
+ * */
 
 #ifndef COO_H
 #define COO_H
@@ -11,6 +10,11 @@
 typedef struct _coo coo;
 typedef coo         *pcoo;
 typedef const coo   *pccoo;
+
+/**
+ *  Coordinate list (COO) sparse matrix storage format.
+ *  Assumes row sorting of entries.
+ */
 
 struct _coo
 {
