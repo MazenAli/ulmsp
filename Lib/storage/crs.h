@@ -15,12 +15,12 @@ typedef const crs   *pccrs;
 
 struct _crs
 {
-    real    *vals;    ///< Pointer to matrix entries
-    index    *rowptr; ///< Pointer to row indices
-    index    *colind; ///< Pointer to column indices
-    index    nonz;    ///< Number of non zeros
-    index    numr;    ///< Number of rows
-    index    numc;    ///< Number of columns
+    real    *vals;    /*!< Pointer to matrix entries */
+    index    *rowptr; /*!< Pointer to row indices */
+    index    *colind; /*!< Pointer to column indices */
+    index    nonz;    /*!< Number of non zeros */
+    index    numr;    /*!< Number of rows */
+    index    numc;    /*!< Number of columns */
 };
 
 /**

@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-/// Conflicting typedefs for "index"
+/* Conflicting typedefs for "index" */
 #define index string_index
     #include <string.h>
 #undef index

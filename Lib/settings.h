@@ -13,7 +13,7 @@ typedef double real;
 typedef enum
 {
     notrans = 0,
-    trans   = 1,
+    trans   = 1
 } transpose;
 
 #ifndef INDEX_BASE

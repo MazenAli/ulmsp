@@ -14,7 +14,7 @@ cgcoo(pccoo A,
       real tol,
       index maxit)
 {
-    /// Input parsing
+    /* Input parsing */
     assert(A);
     assert(x);
     assert(b);
@@ -29,7 +29,7 @@ cgcoo(pccoo A,
     prealvector temp = new_realvector(x->length);
     prealvector rold = new_realvector(x->length);
 
-    /// Initial residual
+    /* Initial residual */
     copy_realvector(r, b);
     transpose t = notrans;
     gecoomv(t, -1., A, x, 1., r);
@@ -51,17 +51,17 @@ cgcoo(pccoo A,
             return i;
         }
 
-        /// alpha_k
+        /* alpha_k */
         real ak = dot_realvector(r, r);
         gecoomv(t, 1., A, p, 0., temp);
         ak /= dot_realvector(p, temp);
 
-        /// Update x_k and r_k
+        /* Update x_k and r_k */
         copy_realvector(rold, r);
         axpy_realvector(ak, p, x);
         axpy_realvector(-ak, temp, r);
 
-        /// Update p_k
+        /* Update p_k */
         real bk = dot_realvector(r, r)/dot_realvector(rold, rold);
         scal_realvector(bk, p);
         axpy_realvector(1., r, p);

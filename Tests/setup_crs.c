@@ -11,12 +11,12 @@
 #include "realvector.h"
 #include "gecrsmv.h"
 
-/// Fill CRS matrix A with some values
+/* Fill CRS matrix A with some values */
 void
 setupdense_crs(pcrs A);
 
 
-/// Add to CRS matrix A some values
+/* Add to CRS matrix A some values */
 void
 adddense_crs(pcrs A);
 
@@ -32,9 +32,9 @@ main(int argc, char **argv)
     int rows = atoi(argv[1]);
     int cols = atoi(argv[2]);
     index min = (rows<cols) ? rows : cols;
-    real alpha = 2., beta = 0.5; ///< gecrsmv parameters
+    real alpha = 2., beta = 0.5; /* gecrsmv parameters */
 
-    /// Set up, resize and change entries of CRS matrix A
+    /* Set up, resize and change entries of CRS matrix A */
     pcrs A = new_crs(0, 0, 0);
     resize_crs(A, 3*min-2, rows, cols);
 
@@ -48,7 +48,7 @@ main(int argc, char **argv)
     (void) printf("A =\n");
     print_crs(A);
 
-    /// Set up, resize and change entries of vector x
+    /* Set up, resize and change entries of vector x */
     prealvector x = new_realvector(rows);
     resize_realvector(x, rows);
 
@@ -60,7 +60,7 @@ main(int argc, char **argv)
     (void) printf("\nx =\n");
     print_realvector(x);
 
-    /// Set up, resize and change entries of vector x
+    /* Set up, resize and change entries of vector x */
     prealvector y = new_realvector(cols);
     setentry_realvector(y, INDEX_BASE, 1.);
     setentry_realvector(y, INDEX_BASE+1, 0.5);
@@ -69,7 +69,7 @@ main(int argc, char **argv)
     (void) printf("\ny =\n");
     print_realvector(y);
 
-    /// Perform y <- alpha*A^T*x+beta*y
+    /* Perform y <- alpha*A^T*x+beta*y */
     transpose t   = trans;
     gecrsmv(t, alpha, A, x, beta, y);
 

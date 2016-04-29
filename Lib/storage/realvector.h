@@ -13,8 +13,8 @@ typedef const realvector   *pcrealvector;
 
 struct _realvector
 {
-    real    *vals;   ///< Pointer to vector entries
-    index    length; ///< Length of vector
+    real    *vals;   /*!< Pointer to vector entries */
+    index    length; /*!< Length of vector */
 };
 
 /**
@@ -56,19 +56,19 @@ print_realvector(pcrealvector x);
  *  Basic operations.
  */
 
-/// Scale x <- alpha*x
+/*!\brief Scale x <- alpha*x */
 void
 scal_realvector(real alpha, prealvector x);
 
-/// Perform x^T*y
+/*!\brief Perform x^T*y */
 real
 dot_realvector(pcrealvector x, pcrealvector y);
 
-/// Perform |x|_2
+/*!\brief Perform |x|_2 */
 real
 nrm2_realvector(pcrealvector x);
 
-/// Perform y <- alpha*x + y
+/*!\brief Perform y <- alpha*x + y */
 void
 axpy_realvector(real alpha, pcrealvector x, prealvector y);
 

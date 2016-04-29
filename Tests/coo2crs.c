@@ -15,7 +15,7 @@ main()
     pcoo A = new_coo(6, 3, 4);
     pcrs B;
 
-    /// Setup COO with repetitions
+    /* Setup COO with repetitions */
     A->vals[0] = 1;
     A->vals[1] = 8;
     A->vals[2] = 10;
@@ -44,7 +44,7 @@ main()
     (void) printf("CRS conversion->\n");
     print_crs(B);
 
-    /// COO w/o repetitions
+    /* COO w/o repetitions */
     A->cols[3] = INDEX_BASE+1;
     A->cols[5] = INDEX_BASE+1;
 
@@ -59,7 +59,7 @@ main()
     (void) printf("CRS conversion->\n");
     print_crs(B);
 
-    /// COO with zero row and repetitions
+    /* COO with zero row and repetitions */
     A->rows[1] = INDEX_BASE;
     A->rows[3] = INDEX_BASE;
     A->rows[4] = INDEX_BASE+2;

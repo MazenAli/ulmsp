@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-/// Conflicting typedefs for "index"
+/* Conflicting typedefs for "index"*/
 #define index string_index
     #include <string.h>
 #undef index
@@ -69,7 +69,7 @@ init_coo2crs(pcrs A, pccoo C)
     assert(A);
     assert(C);
 
-    /// In case C empty
+    /* In case C empty */
     if (!C->nonz) {
         A->vals   = NULL;
         A->rowptr = NULL;
@@ -87,7 +87,7 @@ init_coo2crs(pcrs A, pccoo C)
     real  *vals;
     int   *flags;
 
-    /// Set meta data
+    /* Set meta data */
     A->numr = C->numr;
     A->numc = C->numc;
 
@@ -98,17 +98,17 @@ init_coo2crs(pcrs A, pccoo C)
     memset(rowptr, 0, (A->numr+1)*sizeof(index));
     memset(flags, 0, C->nonz*sizeof(int));
 
-    /// Count number of each row
+    /* Count number of each row */
     for (k=0; k<C->nonz; ++k) {
         ++rowptr[C->rows[k]-INDEX_BASE+1];
     }
 
-    /// Accumulate
+    /* Accumulate */
     for (k=1; k<A->numr; ++k) {
         rowptr[k+1] += rowptr[k];
     }
 
-    /// Add and flag repetitions
+    /* Add and flag repetitions */
     for (k=0; k<C->nonz; ++k) {
         for (i=rowptr[C->rows[k]-INDEX_BASE];
              i<rowptr[C->rows[k]-INDEX_BASE+1]; ++i) {
@@ -129,7 +129,7 @@ init_coo2crs(pcrs A, pccoo C)
     }
 
 
-    /// No repetitions
+    /* No repetitions */
     if (A->nonz==C->nonz) {
         A->vals   = vals;
         A->rowptr = rowptr;
@@ -139,7 +139,7 @@ init_coo2crs(pcrs A, pccoo C)
         return;
     }
 
-    /// Eliminate repetitions
+    /* Eliminate repetitions */
     A->vals      = (real*)  malloc(A->nonz*sizeof(real));
     A->colind    = (index*) malloc(A->nonz*sizeof(index));
 

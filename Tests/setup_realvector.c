@@ -20,7 +20,7 @@ main(int argc, char **argv)
     index i;
     real alpha = 0.5;
 
-    /// Set up vectors
+    /* Set up vectors */
     prealvector x = new_realvector(n);
     prealvector y = new_realvector(n);
 
@@ -29,7 +29,7 @@ main(int argc, char **argv)
         setentry_realvector(y, i, (real) i);
     }
 
-    /// Perform x <- alpha*x
+    /* Perform x <- alpha*x */
     scal_realvector(alpha, x);
 
     (void) printf("y =\n");
@@ -38,19 +38,19 @@ main(int argc, char **argv)
     (void) printf("x post scaling =\n");
     print_realvector(x);
 
-    /// Perform x^T*y
+    /* Perform x^T*y */
     real dot = dot_realvector(x, y);
     (void) printf("dot product = %f\n", dot);
 
-    /// Perform |x|_2
+    /* Perform |x|_2 */
     real norm = nrm2_realvector(x);
     (void) printf("nrm2 x = %f\n", norm);
 
-    /// Perform |y|_2
+    /* Perform |y|_2 */
     norm = nrm2_realvector(y);
     (void) printf("nrm2 y = %f\n", norm);
 
-    /// Perform y <- alpha*x + y
+    /* Perform y <- alpha*x + y */
     axpy_realvector(alpha, x, y);
     (void) printf("alpha*x+y =\n");
     print_realvector(y);
