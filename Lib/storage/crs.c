@@ -15,9 +15,10 @@
 pcrs
 new_crs(index nonz, index numr, index numc)
 {
+    pcrs A;
+
     assert(nonz<=numr*numc);
 
-    pcrs A;
     A = (pcrs) malloc(sizeof(crs));
     init_crs(A, nonz, numr, numc);
 

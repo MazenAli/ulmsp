@@ -10,9 +10,10 @@
 pcoo
 new_coo(index nonz, index numr, index numc)
 {
+    pcoo A;
+
     assert(nonz<=numr*numc);
 
-    pcoo A;
     A = (pcoo) malloc(sizeof(coo));
     init_coo(A, nonz, numr, numc);
 
