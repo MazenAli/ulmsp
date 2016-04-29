@@ -14,12 +14,12 @@ gecrsmv(transpose t,
         real beta,
         prealvector y)
 {
+    index i, j;
+
     /* Input parsing */
     assert(A);
     assert(x);
     assert(y);
-
-    index i, j;
 
     if (t==notrans) {
         assert(A->numc==x->length);

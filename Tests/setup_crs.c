@@ -24,18 +24,25 @@ adddense_crs(pcrs A);
 int
 main(int argc, char **argv)
 {
+    int rows, cols;
+    index min;
+    real alpha, beta;
+    pcrs A;
+    prealvector x, y;
+    transpose t;
+
     if (argc!=3) {
         (void) fprintf(stderr, "Usage: ./main numr numc\n");
         return 1;
     }
 
-    int rows = atoi(argv[1]);
-    int cols = atoi(argv[2]);
-    index min = (rows<cols) ? rows : cols;
-    real alpha = 2., beta = 0.5; /* gecrsmv parameters */
+    rows = atoi(argv[1]);
+    cols = atoi(argv[2]);
+    min = (rows<cols) ? rows : cols;
+    alpha = 2.; beta = 0.5; /* gecrsmv parameters */
 
     /* Set up, resize and change entries of CRS matrix A */
-    pcrs A = new_crs(0, 0, 0);
+    A = new_crs(0, 0, 0);
     resize_crs(A, 3*min-2, rows, cols);
 
     setupdense_crs(A);
@@ -49,7 +56,7 @@ main(int argc, char **argv)
     print_crs(A);
 
     /* Set up, resize and change entries of vector x */
-    prealvector x = new_realvector(rows);
+    x = new_realvector(rows);
     resize_realvector(x, rows);
 
     setentry_realvector(x, INDEX_BASE, 2.5);
@@ -61,7 +68,7 @@ main(int argc, char **argv)
     print_realvector(x);
 
     /* Set up, resize and change entries of vector x */
-    prealvector y = new_realvector(cols);
+    y = new_realvector(cols);
     setentry_realvector(y, INDEX_BASE, 1.);
     setentry_realvector(y, INDEX_BASE+1, 0.5);
     setentry_realvector(y, INDEX_BASE+3, 2);
@@ -70,7 +77,7 @@ main(int argc, char **argv)
     print_realvector(y);
 
     /* Perform y <- alpha*A^T*x+beta*y */
-    transpose t   = trans;
+    t = trans;
     gecrsmv(t, alpha, A, x, beta, y);
 
     (void) printf("\nalpha*Op(A)*x + beta*y =\n");
@@ -87,12 +94,12 @@ main(int argc, char **argv)
 void
 setupdense_crs(pcrs A)
 {
+    index i, min;
+
     assert(A);
-    index min = (A->numr<A->numc) ? A->numr : A->numc;
+    min = (A->numr<A->numc) ? A->numr : A->numc;
     assert(A->nonz==3*min-2);
     assert(A->nonz>2);
-
-    index i;
 
     for (i=0; i<A->numr; ++i) {
         if (i==0) {
@@ -123,11 +130,11 @@ setupdense_crs(pcrs A)
 void
 adddense_crs(pcrs A)
 {
-    assert(A);
-    index min = (A->numr<A->numc) ? A->numr : A->numc;
-    assert(A->nonz==3*min-2);
+    index i, min;
 
-    index i;
+    assert(A);
+    min = (A->numr<A->numc) ? A->numr : A->numc;
+    assert(A->nonz==3*min-2);
 
     for (i=INDEX_BASE; i<min+INDEX_BASE; ++i) {
         addentry_crs(A, i, i, 2);

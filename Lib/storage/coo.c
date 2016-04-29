@@ -73,11 +73,13 @@ del_coo(pcoo A)
 real
 getentry_coo(pccoo A, index i, index j)
 {
+    index    ii;
+    real entry;
+
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
 
-    index    ii;
-    real entry = 0.;
+    entry = 0.;
 
     for (ii=0; ii<A->nonz; ++ii) {
         if (A->rows[ii]==i && A->cols[ii]==j) {
@@ -92,10 +94,10 @@ getentry_coo(pccoo A, index i, index j)
 void
 setentry_coo(pcoo A, index i, index j, real entry)
 {
+    index    ii;
+
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
-
-    index    ii;
 
     for (ii=0; ii<A->nonz; ++ii) {
         if (A->rows[ii]==i && A->cols[ii]==j) {
@@ -111,10 +113,10 @@ setentry_coo(pcoo A, index i, index j, real entry)
 void
 addentry_coo(pcoo A, index i, index j, real entry)
 {
+    index    ii;
+
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
-
-    index    ii;
 
     for (ii=0; ii<A->nonz; ++ii) {
         if (A->rows[ii]==i && A->cols[ii]==j) {
@@ -130,9 +132,9 @@ addentry_coo(pcoo A, index i, index j, real entry)
 void
 print_coo(pccoo A)
 {
-    assert(A);
-
     index i;
+
+    assert(A);
 
     for (i=0; i<A->nonz; ++i) {
         (void) printf("(%lu, %lu) : %8.4f\n",
@@ -144,9 +146,9 @@ print_coo(pccoo A)
 void
 printdense_coo(pccoo A)
 {
-    assert(A);
-
     index i, j;
+
+    assert(A);
 
     for (i=INDEX_BASE; i<A->numr+INDEX_BASE; ++i) {
         for (j=INDEX_BASE; j<A->numc+INDEX_BASE; ++j) {

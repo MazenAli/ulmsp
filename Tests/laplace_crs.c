@@ -20,22 +20,27 @@ assemble_laplace(pcrs A, index N);
 int
 main(int argc, char **argv)
 {
+    int N, maxit, print;
+    index i, it;
+    real alpha, beta, tol;
+    pcrs A;
+    prealvector x, y;
+    transpose t;
+
     if (argc!=4) {
         (void) fprintf(stderr, "Usage: ./main N maxit print(1/0)\n");
         return 1;
     }
 
-    int N     = atoi(argv[1]); /* Nodes in each dimension */
-    int maxit = atoi(argv[2]); /* Maximum iteration number for CG */
-    int print = atoi(argv[3]); /* Print output: set to 0 for big N */
+    N     = atoi(argv[1]); /* Nodes in each dimension */
+    maxit = atoi(argv[2]); /* Maximum iteration number for CG */
+    print = atoi(argv[3]); /* Print output: set to 0 for big N */
 
-    index i;
-    real alpha = 1., beta = 0.; /* gecrsmv parameters */
-    real tol = 1e-8;            /* CG tolerance */
-    index it;
+    alpha = 1.; beta = 0.; /* gecrsmv parameters */
+    tol = 1e-8;            /* CG tolerance */
 
     /* Assemble and print stiffness matrix */
-    pcrs A = new_crs(0, 0, 0);
+    A = new_crs(0, 0, 0);
     assemble_laplace(A, N);
 
     if (print) {
@@ -44,10 +49,10 @@ main(int argc, char **argv)
     }
 
     /* Set up, perform and print y <- alpha*A*x+beta*y */
-    prealvector x = new_realvector(N*N);
-    prealvector y = new_realvector(N*N);
+    x = new_realvector(N*N);
+    y = new_realvector(N*N);
 
-    transpose t = notrans;
+    t = notrans;
 
     for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
         setentry_realvector(x, i, 1.);
@@ -80,10 +85,11 @@ main(int argc, char **argv)
 void
 assemble_laplace(pcrs A, index N)
 {
+    index i, j;
+
     assert(N>1);
     resize_crs(A, 5*N*N-4*N, N*N, N*N);
 
-    index i, j;
 
     /* Lower left node */
     A->vals[0] = 4.;

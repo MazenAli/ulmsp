@@ -66,6 +66,12 @@ init_crs(pcrs A, index nonz, index numr, index numc)
 void
 init_coo2crs(pcrs A, pccoo C)
 {
+    index k, i;
+    index currentrow, offset;
+    index *rowptr, *colind;
+    real  *vals;
+    int   *flags;
+
     assert(A);
     assert(C);
 
@@ -81,11 +87,6 @@ init_coo2crs(pcrs A, pccoo C)
         return;
     }
 
-    index k, i;
-    index currentrow, offset;
-    index *rowptr, *colind;
-    real  *vals;
-    int   *flags;
 
     /* Set meta data */
     A->numr = C->numr;
@@ -196,11 +197,13 @@ del_crs(pcrs A)
 real
 getentry_crs(pccrs A, index i, index j)
 {
+    index    ii;
+    real entry;
+
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
 
-    index    ii;
-    real entry = 0.;
+    entry = 0.;
 
     for (ii=A->rowptr[i-INDEX_BASE];
          ii<A->rowptr[i-INDEX_BASE+1]; ++ii) {
@@ -216,10 +219,10 @@ getentry_crs(pccrs A, index i, index j)
 void
 setentry_crs(pcrs A, index i, index j, real entry)
 {
+    index    ii;
+
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
-
-    index    ii;
 
     for (ii=A->rowptr[i-INDEX_BASE];
          ii<A->rowptr[i-INDEX_BASE+1]; ++ii) {
@@ -236,10 +239,10 @@ setentry_crs(pcrs A, index i, index j, real entry)
 void
 addentry_crs(pcrs A, index i, index j, real entry)
 {
+    index    ii;
+
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
-
-    index    ii;
 
     for (ii=A->rowptr[i-INDEX_BASE];
          ii<A->rowptr[i-INDEX_BASE+1]; ++ii) {
@@ -256,9 +259,9 @@ addentry_crs(pcrs A, index i, index j, real entry)
 void
 print_crs(pccrs A)
 {
-    assert(A);
-
     index i, j;
+
+    assert(A);
 
     for (i=0; i<A->numr; ++i) {
         for (j=A->rowptr[i]; j<A->rowptr[i+1]; ++j) {
@@ -274,9 +277,9 @@ print_crs(pccrs A)
 void
 printdense_crs(pccrs A)
 {
-    assert(A);
+   index i, j;
 
-    index i, j;
+   assert(A);
 
     for (i=INDEX_BASE; i<A->numr+INDEX_BASE; ++i) {
         for (j=INDEX_BASE; j<A->numc+INDEX_BASE; ++j) {

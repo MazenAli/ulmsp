@@ -11,18 +11,22 @@
 int
 main(int argc, char **argv)
 {
+    int n;
+    index i;
+    real alpha;
+    prealvector x, y;
+
     if (argc!=2) {
         (void) fprintf(stderr, "Usage: ./main n\n");
         return 1;
     }
 
-    int n = atoi(argv[1]);
-    index i;
-    real alpha = 0.5;
+    n = atoi(argv[1]);
+    alpha = 0.5;
 
     /* Set up vectors */
-    prealvector x = new_realvector(n);
-    prealvector y = new_realvector(n);
+    x = new_realvector(n);
+    y = new_realvector(n);
 
     for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
         setentry_realvector(x, i, (real) i);

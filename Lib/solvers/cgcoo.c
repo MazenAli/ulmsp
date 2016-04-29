@@ -14,6 +14,11 @@ cgcoo(pccoo A,
       real tol,
       index maxit)
 {
+    index i;
+    real residual;
+    prealvector r, p, temp, rold;
+    transpose t;
+
     /* Input parsing */
     assert(A);
     assert(x);
@@ -22,20 +27,20 @@ cgcoo(pccoo A,
     assert(x->length==b->length);
     assert(A->numr==A->numc);
 
-    index i;
-    real residual;
-    prealvector r    = new_realvector(x->length);
-    prealvector p    = new_realvector(x->length);
-    prealvector temp = new_realvector(x->length);
-    prealvector rold = new_realvector(x->length);
+    r    = new_realvector(x->length);
+    p    = new_realvector(x->length);
+    temp = new_realvector(x->length);
+    rold = new_realvector(x->length);
 
     /* Initial residual */
     copy_realvector(r, b);
-    transpose t = notrans;
+    t = notrans;
     gecoomv(t, -1., A, x, 1., r);
     copy_realvector(p, r);
 
     for (i=0; i<=maxit; ++i) {
+        real ak, bk;
+
         residual = nrm2_realvector(r);
 
         if (residual<=tol) {
@@ -52,7 +57,7 @@ cgcoo(pccoo A,
         }
 
         /* alpha_k */
-        real ak = dot_realvector(r, r);
+        ak = dot_realvector(r, r);
         gecoomv(t, 1., A, p, 0., temp);
         ak /= dot_realvector(p, temp);
 
@@ -62,7 +67,7 @@ cgcoo(pccoo A,
         axpy_realvector(-ak, temp, r);
 
         /* Update p_k */
-        real bk = dot_realvector(r, r)/dot_realvector(rold, rold);
+        bk = dot_realvector(r, r)/dot_realvector(rold, rold);
         scal_realvector(bk, p);
         axpy_realvector(1., r, p);
     }

@@ -14,12 +14,12 @@ gecoomv(transpose t,
         real beta,
         prealvector y)
 {
+    index i;
+
     /* Input parsing */
     assert(A);
     assert(x);
     assert(y);
-
-    index i;
 
     if (t==notrans) {
         assert(A->numc==x->length);
