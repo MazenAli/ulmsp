@@ -29,9 +29,10 @@ new_crs(index nonz, index numr, index numc)
 pcrs
 new_coo2crs(pccoo C)
 {
+    pcrs A;
+
     assert(C);
 
-    pcrs A;
     A = (pcrs) malloc(sizeof(crs));
     init_coo2crs(A, C);
 
