@@ -14,6 +14,7 @@ ULMSP_OPS= \
 
 ULMSP_SOLVERS= \
 	Lib/solvers/cgcrs.c \
+	Lib/solvers/cgcoo.c \
 
 SOURCES_libulmsp := \
 	$(ULMSP_STORAGE) \
