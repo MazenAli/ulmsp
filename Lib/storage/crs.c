@@ -10,6 +10,8 @@
     #include <string.h>
 #undef index
 
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+
 #include "crs.h"
 
 pcrs
@@ -66,108 +68,121 @@ init_crs(pcrs A, index nonz, index numr, index numc)
 
 
 void
-init_coo2crs(pcrs A, pccoo C)
+init_coo2crs(pcrs A, pccoo T)
 {
     index k, i;
-    index currentrow, offset;
     index *rowptr, *colind;
     real  *vals;
-    int   *flags;
+    index p, q, nz;
+    index *Ti, *Tj, *work;
+    real  *Tx;
 
+    /* Checks, if C and T are no NULL pointer*/
+    assert(T);
     assert(A);
-    assert(C);
 
     /* In case C empty */
-    if (!C->nonz) {
-        A->vals   = NULL;
-        A->rowptr = NULL;
-        A->colind = NULL;
-        A->nonz   = 0;
-        A->numr   = C->numr;
-        A->numc   = C->numc;
+    if (!T->nonz) {
+        A->vals   = NULL; A->rowptr = NULL;    A->colind = NULL;
+        A->nonz   = 0;    A->numr   = T->numr; A->numc   = T->numc;
 
         return;
     }
 
+    /* Set dimensioin of matrix */
+    A->numr = T->numr;  A->numc = T->numc;
 
-    /* Set meta data */
-    A->numr = C->numr;
-    A->numc = C->numc;
+    /* Allocate memory for CRS matrix and some workspace */
+    vals   = (real*)  malloc( T->nonz    * sizeof(real));
+    colind = (index*) malloc( T->nonz    * sizeof(index));
+    rowptr = (index*) malloc((T->numr+1) * sizeof(index));
+    work   = (index*) calloc(MAX(T->numr, T->numc)  , sizeof(index));
+                                             /* zero-initialize */
 
-    vals   = (real*)  malloc(C->nonz*sizeof(real));
-    rowptr = (index*) malloc((A->numr+1)*sizeof(index));
-    colind = (index*) malloc(C->nonz*sizeof(index));
-    flags  = (int*)  malloc(C->nonz*sizeof(int));
-    memset(rowptr, 0, (A->numr+1)*sizeof(index));
-    memset(flags, 0, C->nonz*sizeof(int));
+    /* Check, if out of memory*/
+    if (!vals || !rowptr || !colind || !work){ /* out of memory*/
+        free(vals);
+        free(rowptr);
+        free(colind);
+        free(work);
 
-    /* Count number of each row */
-    for (k=0; k<C->nonz; ++k) {
-        ++rowptr[C->rows[k]-INDEX_BASE+1];
+        return;
     }
 
-    /* Accumulate */
-    for (k=1; k<A->numr; ++k) {
-        rowptr[k+1] += rowptr[k];
+    Tx = T->vals; Ti = T->rows; Tj = T->cols;
+
+    /*
+    * Convert coordinates format to CRS format,
+    * allow duplicate entries
+    */
+
+    /* Count entries per row */
+    for (k = 0 ; k < T->nonz ; k++) work[Ti[k]-INDEX_BASE]++ ;
+    /* Create col pointer */
+    cumsum(rowptr,work,T->numr);
+    /* Copy data from T to C */
+    for (k = 0 ; k < T->nonz ; k++){
+        colind[p = work[Ti[k]-INDEX_BASE]++] = Tj[k];
+        vals[p] = Tx[k] ;
     }
 
-    /* Add and flag repetitions */
-    for (k=0; k<C->nonz; ++k) {
-        for (i=rowptr[C->rows[k]-INDEX_BASE];
-             i<rowptr[C->rows[k]-INDEX_BASE+1]; ++i) {
+    /*
+    * Remove duplicate entries
+    */
 
-            if (flags[i]) {
-                if (C->cols[k]==colind[i]) {
-                    vals[i] += C->vals[k];
-                    break;
-                }
+    for (k = 0 ; k < T->numc ; k++) work[k]=0;   /* col k yet not seen =
+    */
+    /* Loop over each row and check if A(i,j) is duplicate */
+    nz = 0;
+    for (i = 0 ; i < T->numr ; i++){
+        q = nz;                           /* Row i will start at q */
+        for (p = rowptr[i] ; p < rowptr[i+1] ; p++){
+            k = colind[p]-INDEX_BASE ;      /* Entry A(i,j) */
+            if (work[k] > q){
+                vals[work[k]-1] += vals[p] ;  /* A(i,j) is a duplicate */
             } else {
-                ++A->nonz;
-                flags[i]  = 1;
-                colind[i] = C->cols[k];
-                vals[i]   = C->vals[k];
-                break;
+                work[k] = nz+1;               /* Record where col j occurs */
+                colind[nz] = k+INDEX_BASE ;   /* Keep A(i,j) */
+                vals[nz++] = vals[p] ;
+            }
+        }
+
+        rowptr[i] = q ;                   /* Record start of row i */
+    }
+
+    rowptr[T->numr] = nz ;              /* Finalize A */
+    free(work);                         /* Free workspace */
+
+    /*
+    * Drop entries which are zero
+    */
+
+    nz = 0;
+    for (i = 0 ; i < T->numr ; i++){
+        p = rowptr[i];                    /* Get current location of row i =
+        */
+        rowptr[i] = nz;                   /* Record new location of row i =
+        */
+        for ( ; p < rowptr [i+1] ; p++){
+            if (vals[p]!=0){
+            vals[nz] = vals[p];           /* Keep A(i,j) */
+            colind[nz++] = colind[p];
             }
         }
     }
 
+    rowptr[A->numr] = nz ;              /* Finalize A */
 
-    /* No repetitions */
-    if (A->nonz==C->nonz) {
-        A->vals   = vals;
-        A->rowptr = rowptr;
-        A->colind = colind;
-        free(flags);
+    /*
+    * Realloc memory of compressed matrix
+    */
 
-        return;
-    }
-
-    /* Eliminate repetitions */
-    A->vals      = (real*)  malloc(A->nonz*sizeof(real));
-    A->colind    = (index*) malloc(A->nonz*sizeof(index));
-
-    currentrow = 0;
-    offset     = 0;
-    for (k=0; k<C->nonz; ++k) {
-        if (k==rowptr[currentrow+1]) {
-            rowptr[currentrow+1] -= offset;
-            ++currentrow;
-        }
-
-        if (!flags[k]) {
-            offset += rowptr[currentrow+1]-k;
-            k       = rowptr[currentrow+1]-1;
-        } else {
-            A->vals[k-offset]   = vals[k];
-            A->colind[k-offset] = colind[k];
-        }
-    }
-    rowptr[A->numr] -= offset;
+    A->vals   = (real*)  realloc(vals,   nz * sizeof(real));
+    A->colind = (index*) realloc(colind, nz * sizeof(index));
     A->rowptr = rowptr;
 
-    free(vals);
-    free(colind);
-    free(flags);
+    /* check for memory error*/
+    return;
 }
 
 
@@ -292,5 +307,22 @@ printdense_crs(pccrs A)
 }
 
 
+real
+cumsum (index *p, index *c, index n)
+{
+    index i, nz = 0 ;
+    real  nz2 = 0 ;
+    if (!p || !c) return (-1) ;     /* check inputs */
+    for (i = 0 ; i < n ; i++){
+    p [i] = nz ;
+    nz += c [i] ;
+    nz2 += c [i] ;        /* also in double to avoid CS_INT overflow =
+    */
+    c [i] = p [i] ;       /* also copy p[0..n-1] back into c[0..n-1]*/
+    }
+    p [n] = nz ;
+
+    return (nz2);           /* return sum (c [0..n-1]) */
+}
 
 #endif

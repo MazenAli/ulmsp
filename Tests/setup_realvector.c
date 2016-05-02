@@ -13,7 +13,7 @@ main(int argc, char **argv)
 {
     int n;
     index i;
-    real alpha;
+    real alpha, dot, norm;
     prealvector x, y;
 
     if (argc!=2) {
@@ -43,11 +43,11 @@ main(int argc, char **argv)
     print_realvector(x);
 
     /* Perform x^T*y */
-    real dot = dot_realvector(x, y);
+    dot = dot_realvector(x, y);
     (void) printf("dot product = %f\n", dot);
 
     /* Perform |x|_2 */
-    real norm = nrm2_realvector(x);
+    norm = nrm2_realvector(x);
     (void) printf("nrm2 x = %f\n", norm);
 
     /* Perform |y|_2 */

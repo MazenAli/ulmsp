@@ -64,4 +64,18 @@ print_crs(pccrs A);
 void
 printdense_crs(pccrs A);
 
+
+/**
+ *  Auxiliary functions
+ */
+
+/**
+ *  Input:   c [0..n-1]
+ *  Output:  p [0..n] = cumulative sum of c [0..n-1] and
+ *           c [0..n-1] copy of p [0..n-1]
+ */
+
+real
+cumsum(index *p, index *c, index n);
+
 #endif
