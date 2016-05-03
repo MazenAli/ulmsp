@@ -1,0 +1,16 @@
+/*! \mainpage Documentation ulmsp
+ * This is a simple sparse library developed at the Institute for Numerical
+ * Mathematics, University of Ulm, for teaching purposes. It contains sparse
+ * matrix storage formats, operations for said formats and solvers.
+ *
+ * To get started you need
+ *   - a copy of the library
+ *   - a C build environment and
+ *   - a "make" tool.
+ *
+ * Keep in mind that the library is built using user and system defined options
+ * set in options.inc and system.inc. If the settings do not fit your system
+ * or user preferences, do not be surprised stuff does not work!
+ *
+ * Set settings, make it and have fun!
+ */

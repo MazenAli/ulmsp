@@ -1,5 +1,5 @@
-/**
- *  Typedefs and macros
+/*! \file settings.h
+ *  Some typedefs and macros.
  */
 
 #ifndef SETTINGS_H
@@ -7,9 +7,10 @@
 
 #include <stddef.h>
 
-typedef size_t index;
-typedef double real;
+typedef size_t index; /*!< Data type for indexing. */
+typedef double real;  /*!< Data type for reals. */
 
+/*! Used in matrix vector operations to perform \f$ A \f$ or \f$ A^T \f$. */
 typedef enum
 {
     notrans = 0,
@@ -17,7 +18,8 @@ typedef enum
 } transpose;
 
 #ifndef INDEX_BASE
-    #define INDEX_BASE 0
+    #define INDEX_BASE 0 /*!< Base for indexing vectors and matrices.
+                              Set in options.inc. */
 #endif
 
 #endif

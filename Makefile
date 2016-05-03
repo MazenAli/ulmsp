@@ -134,7 +134,7 @@ $(OBJECTS_tests): Makefile
 # ------------------------------------------------------------
 
 doc:
-	doxygen Doc/Doxyfile
+	doxygen Doc/doxyfile
 
 # ------------------------------------------------------------
 # Rules for the main library

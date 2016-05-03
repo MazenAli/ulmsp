@@ -1,4 +1,4 @@
-/**
+/*! \file cgcrs.h
  *  Conjugate Gradient Method (CG) for a CRS matrix.
  */
 
@@ -9,6 +9,10 @@
 #include "../storage/realvector.h"
 #include "../storage/crs.h"
 
+/*!
+ * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
+ * Returns number of iterations.
+ */
 index
 cgcrs(pccrs A,
       prealvector x,
