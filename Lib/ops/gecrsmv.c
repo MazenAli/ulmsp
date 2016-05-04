@@ -35,20 +35,24 @@ gecrsmv(transpose t,
     scal_realvector(beta, y);
 
     /* Perform y <- alpha*A*x + y */
-    for (i=0; i<A->numr; ++i) {
-        for(j=A->rowptr[i]; j<A->rowptr[i+1]; ++j) {
-            if (t==notrans) {
-                addentry_realvector(y,
-                                    i+INDEX_BASE,
-                                    alpha*
-                                    getentry_realvector(x, A->colind[j])*
-                                    A->vals[j]);
-            } else {
-                addentry_realvector(y,
-                                    A->colind[j],
-                                    alpha*
-                                    getentry_realvector(x, i+INDEX_BASE)*
-                                    A->vals[j]);
+    if (t==notrans) {
+        for (i=0; i<A->numr; ++i) {
+            for(j=A->rowptr[i]; j<A->rowptr[i+1]; ++j) {
+                    addentry_realvector(y,
+                                        i+INDEX_BASE,
+                                        alpha*
+                                        getentry_realvector(x, A->colind[j])*
+                                        A->vals[j]);
+            }
+        }
+    } else {
+        for (i=0; i<A->numr; ++i) {
+            for(j=A->rowptr[i]; j<A->rowptr[i+1]; ++j) {
+                    addentry_realvector(y,
+                                        A->colind[j],
+                                        alpha*
+                                        getentry_realvector(x, i+INDEX_BASE)*
+                                        A->vals[j]);
 
             }
         }

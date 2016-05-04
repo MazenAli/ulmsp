@@ -35,20 +35,21 @@ gecoomv(transpose t,
     scal_realvector(beta, y);
 
     /* Perform y <- alpha*A*x + y */
-    for (i=0; i<A->nonz; ++i) {
-        if (t==notrans) {
-            addentry_realvector(y,
-                                A->rows[i],
-                                alpha*
-                                getentry_realvector(x, A->cols[i])*
-                                A->vals[i]);
-        } else {
-            addentry_realvector(y,
-                                A->cols[i],
-                                alpha*
-                                getentry_realvector(x, A->rows[i])*
-                                A->vals[i]);
-
+    if (t==notrans) {
+        for (i=0; i<A->nonz; ++i) {
+                addentry_realvector(y,
+                                    A->rows[i],
+                                    alpha*
+                                    getentry_realvector(x, A->cols[i])*
+                                    A->vals[i]);
+        }
+    } else {
+        for (i=0; i<A->nonz; ++i) {
+                addentry_realvector(y,
+                                    A->cols[i],
+                                    alpha*
+                                    getentry_realvector(x, A->rows[i])*
+                                    A->vals[i]);
         }
     }
 }

@@ -5,10 +5,10 @@
 BRIEF_OUTPUT=1
 
 # Build for debugging
-DEBUG=1
+#DEBUG=1
 
 # Build optimized
-#OPT=1
+OPT=1
 
 # Index base
 BASE=1

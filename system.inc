@@ -43,7 +43,7 @@ endif
 # BLAS
 #
 ifdef USE_BLAS
-  CFLAGS += -DUSE_BLAS -DADD_LIBS += -lblas -lgfortran
+  CFLAGS += -DUSE_BLAS
   LIBS += -lblas -lgfortran
 endif
 
