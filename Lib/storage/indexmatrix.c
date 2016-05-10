@@ -159,6 +159,7 @@ pindexmatrix load_indexmatrix(char *fname, index rows, transpose t)
   FILE *file;
   index cnt, cols, a, i, j;
   pindexmatrix x;
+  int suppr_out;
 
   file = fopen(fname,"r");
 
@@ -183,13 +184,15 @@ pindexmatrix load_indexmatrix(char *fname, index rows, transpose t)
    init_indexmatrix(x, cols,rows);
    for (j=0; j<cols; j++) {
      for (i=0; i<rows; i++) {
-        fscanf(file,"%lu",&(x->vals[i*cols+j]));
+        suppr_out = fscanf(file,"%lu",&(x->vals[i*cols+j]));
+        (void) suppr_out;
       }
     }
   } else {
     init_indexmatrix(x,rows,cols);
     for (j=0; j<rows*cols; j++) {
-      fscanf(file,"%lu",&(x->vals[j]));
+      suppr_out = fscanf(file,"%lu",&(x->vals[j]));
+      (void) suppr_out;
     }
   }
   fclose(file);

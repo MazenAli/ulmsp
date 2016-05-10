@@ -162,6 +162,7 @@ load_realmatrix(char *fname, index rows, transpose t)
   index cnt, cols, i, j;
   real a;
   prealmatrix x;
+  int suppr_out;
 
   file = fopen(fname,"r");
 
@@ -186,13 +187,15 @@ load_realmatrix(char *fname, index rows, transpose t)
    init_realmatrix(x, cols,rows);
    for (j=0; j<cols; j++) {
      for (i=0; i<rows; i++) {
-        fscanf(file,"%lf",&(x->vals[i*cols+j]));
+        suppr_out = fscanf(file,"%lf",&(x->vals[i*cols+j]));
+        (void) suppr_out;
       }
     }
   } else {
     init_realmatrix(x,rows,cols);
     for (j=0; j<rows*cols; j++) {
-      fscanf(file,"%lf",&(x->vals[j]));
+      suppr_out = fscanf(file,"%lf",&(x->vals[j]));
+      (void) suppr_out;
     }
   }
   fclose(file);

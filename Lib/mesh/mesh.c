@@ -169,7 +169,7 @@ void restriction(pcrealvector x,        /* in  */
   ndim = y->length;
   in = x->vals; out = y->vals; ptr = edgeno->vals;
 
-  for (i=0; i<ndim; i++) out[i] = in[i];  
+  for (i=0; i<ndim; i++) out[i] = in[i];
   for (i=0; i<edgeno->cols; i++){
     out[ndim + ptr[2*i  ]-INDEX_BASE] += 0.5*in[ndim+i];
     out[ndim + ptr[2*i+1]-INDEX_BASE] += 0.5*in[ndim+i];
@@ -188,15 +188,15 @@ void stima_laplace(real p1[2],    /* in  */
   for (i = 0 ; i < 2 ; i++ ){
      d[0][i] = p3[i]-p2[i];
      d[1][i] = p1[i]-p3[i];
-     d[2][i] = p2[i]-p1[i]; 
+     d[2][i] = p2[i]-p1[i];
   }
-  fac = 1/(2.0*(d[1][0]*d[2][1]-d[2][0]*d[1][1]));
+  fac = 1./(2.0*(d[1][0]*d[2][1]-d[2][0]*d[1][1]));
   for ( i = 0 ; i < 3 ; i++ ){
-    for ( j = 0 ; j < i ; j++ ){ 
-      m[i][j] = fac * (d[i][0]*d[j][0] + d[i][1]*d[j][1]); 
-      m[j][i] = m[i][j]; 
+    for ( j = 0 ; j < i ; j++ ){
+      m[i][j] = fac * (d[i][0]*d[j][0] + d[i][1]*d[j][1]);
+      m[j][i] = m[i][j];
     }
-    m[i][i] = fac * (d[i][0]*d[i][0] + d[i][1]*d[i][1]); 
+    m[i][i] = fac * (d[i][0]*d[i][0] + d[i][1]*d[i][1]);
   }
 }
 
@@ -211,7 +211,7 @@ void buildStiffness(prealmatrix coordinates,        /* in  */
   nC = coordinates->cols;
 
   resize_coo(S, 9*nT, nC, nC);
-  Sx = S->vals; Si = S->rows; Sj = S->cols; 
+  Sx = S->vals; Si = S->rows; Sj = S->cols;
   C = coordinates->vals; E = elements->vals;
 
   nz = 0;

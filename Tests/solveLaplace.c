@@ -3,17 +3,14 @@
  */
 
 #include <stdio.h>
-
-#include<stdlib.h>
-
+#include <time.h>
+#include <stdlib.h>
 
 #include "settings.h"
 #include "mesh.h"
 #include "gecrsmv.h"
 #include "gecoomv.h"
 #include "cgcrs.h"
-
-#include<time.h>
 
 #define ELAPSED(t0,t1) ((int) ((t1 - t0) / (double) CLOCKS_PER_SEC * 1000))
 
@@ -40,14 +37,14 @@ main(int argc, char **argv)
     pcrs A = new_crs(1,1,1);
     pindexmatrix edgeno = new_indexmatrix(0,0);
     pindexvector fixedNodes = new_indexvector(0);
-    pindexvector material 
+    pindexvector material
             = load_indexvector("./Tests/Example1/material.dat");
-    prealmatrix coordinates 
-            = load_realmatrix("./Tests/Example1/coordinates.dat",(index)2,1);
-    pindexmatrix elements 
-            = load_indexmatrix("./Tests/Example1/elements.dat",3,1);
-    pindexmatrix elements2edges 
-            = load_indexmatrix("./Tests/Example1/elements2edges.dat",3,1);
+    prealmatrix coordinates
+            = load_realmatrix("./Tests/Example1/coordinates.dat", 2, 1);
+    pindexmatrix elements
+            = load_indexmatrix("./Tests/Example1/elements.dat",3, 1);
+    pindexmatrix elements2edges
+            = load_indexmatrix("./Tests/Example1/elements2edges.dat",3, 1);
     int nBdry = 2;
     pindexvector bdrytyp = new_indexvector(2);
     pindexmatrix bdrylist[2];
@@ -170,7 +167,7 @@ main(int argc, char **argv)
 
     del_coo(S);
     del_crs(A);
-    del_realvector(rhs); 
+    del_realvector(rhs);
     del_realvector(sol);
     del_indexmatrix(edgeno);
     del_indexvector(fixedNodes);

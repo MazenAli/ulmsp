@@ -48,6 +48,7 @@ SOURCES_stable := \
 	Tests/testSolveGauss.c \
 	Tests/refinetria.c \
 	Tests/solveLaplace.c \
+	Tests/solveLaplaceL.c \
 	Tests/solveLaplace_CG_BPX.c \
 
 SOURCES_tests = $(SOURCES_stable) \

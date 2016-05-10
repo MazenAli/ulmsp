@@ -94,7 +94,7 @@ cgcrs_constrains(pccrs A,                   /* in     */
 
     /* Incorporate constrains */
     for ( k =  0 ; k < fixedNodes->length; k++){
-      r->vals[fixedNodes->vals[k]-INDEX_BASE] = 0.0; 
+      r->vals[fixedNodes->vals[k]-INDEX_BASE] = 0.;
     }
     copy_realvector(p, r);
 
@@ -119,7 +119,7 @@ cgcrs_constrains(pccrs A,                   /* in     */
 
         /* Incorporate constrains */
         for ( k =  0 ; k < fixedNodes->length; k++){
-          a->vals[fixedNodes->vals[k]-INDEX_BASE] = 0.0; 
+          a->vals[fixedNodes->vals[k]-INDEX_BASE] = 0.;
         }
         lambda = rho_new/dot_realvector(p, a);
 
