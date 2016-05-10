@@ -1,4 +1,4 @@
-/*! \file gauss.h
+/*! \file gausscrs.h
  *  Gauss method for a CRS matrix.
  */
 

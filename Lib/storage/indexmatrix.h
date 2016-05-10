@@ -13,6 +13,9 @@ typedef indexmatrix         *pindexmatrix;  /*!< Pointer to indexmatrix. */
 typedef const indexmatrix   *pcindexmatrix; /*!< Const pointer
                                                  to indexmatrix. */
 
+/*! \struct _indexmatrix "indexmatrix.h"
+ *  \brief A struct for storing a matrix of indices.
+ */
 struct _indexmatrix
 {
     index    *vals;  /*!< Pointer to matrix entries. */
@@ -66,11 +69,11 @@ addentry_indexmatrix(pindexmatrix A, index i, index j, index entry);
 void
 print_indexmatrix(pcindexmatrix A);
 
-/* Load indexmatrix from file, return pointer. */
+/*! Load indexmatrix from file, return pointer. */
 pindexmatrix
 load_indexmatrix(char *fname, index rows, transpose t);
 
-/* Write indexmatrix to file, return status. */
+/*! Write indexmatrix to file, return status. */
 int
 write_indexmatrix(char *fname, pindexmatrix A, transpose t);
 /**@}*/

@@ -64,11 +64,11 @@ addentry_realvector(prealvector x, index i, real entry);
 void
 print_realvector(pcrealvector x);
 
-/* Load realvector from file, return pointer. */
+/*! Load realvector from file, return pointer. */
 prealvector
 load_realvector(char *fname);
 
-/* Write realvector to file, return status. */
+/*! Write realvector to file, return status. */
 int
 write_realvector(char *fname, prealvector v);
 /**@}*/

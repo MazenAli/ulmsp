@@ -12,6 +12,9 @@ typedef struct _realmatrix realmatrix;    /*!< Struct typedef: use realmatrix
 typedef realmatrix         *prealmatrix;  /*!< Pointer to realmatrix. */
 typedef const realmatrix   *pcrealmatrix; /*!< Const pointer to realmatrix. */
 
+/*! \struct _realmatrix "realmatrix.h"
+ *  \brief A struct for storing a matrix of reals.
+ */
 struct _realmatrix
 {
     real    *vals;   /*!< Pointer to matrix entries. */
@@ -65,11 +68,11 @@ addentry_realmatrix(prealmatrix A, index i, index j, real entry);
 void
 print_realmatrix(pcrealmatrix A);
 
-/* Load realmatrix from file, return pointer. */
+/*! Load realmatrix from file, return pointer. */
 prealmatrix
 load_realmatrix(char *fname, index cols, transpose t);
 
-/* Write realmatrix to file, return status. */
+/*! Write realmatrix to file, return status. */
 int
 write_realmatrix(char *fname, prealmatrix A, transpose t);
 /**@}*/

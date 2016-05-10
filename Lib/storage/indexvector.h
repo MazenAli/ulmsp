@@ -13,6 +13,9 @@ typedef indexvector         *pindexvector;  /*!< Pointer to indexvector. */
 typedef const indexvector   *pcindexvector; /*!< Const pointer to
                                                  indexvector. */
 
+/*! \struct _indexvector "indexvector.h"
+ *  \brief A struct for storing a vector of indices.
+ */
 struct _indexvector
 {
     index    *vals;  /*!< Pointer to vector entries. */
@@ -65,11 +68,11 @@ addentry_indexvector(pindexvector x, index i, index entry);
 void
 print_indexvector(pcindexvector x);
 
-/* Load indexvector from file, return pointer. */
+/*! Load indexvector from file, return pointer. */
 pindexvector
 load_indexvector(char *fname);
 
-/* Write indexvector to file, return status. */
+/*! Write indexvector to file, return status. */
 int
 write_indexvector(char *fname, pindexvector v);
 /**@}*/

@@ -1,7 +1,8 @@
 /*! \mainpage Documentation ulmsp
  * This is a simple sparse library developed at the Institute for Numerical
  * Mathematics, University of Ulm, for teaching purposes. It contains sparse
- * matrix storage formats, operations for said formats and solvers.
+ * matrix storage formats, operations for said formats, mesh generation
+ * routines and solvers.
  *
  * To get started you need
  *   - a copy of the library
@@ -16,7 +17,7 @@
  *
  * \authors    Mazen Ali
  * \authors    Stefan Funken
- * \version    0.1
+ * \version    0.2
  * \date       May 2016
  * \copyright  GNU Public Licence
  */

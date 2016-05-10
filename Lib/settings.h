@@ -19,7 +19,7 @@ typedef enum
 
 #ifndef INDEX_BASE
     #define INDEX_BASE 0 /*!< Base for indexing vectors and matrices.
-                              Set in options.inc. */
+                              Set in options.inc. Default is 0. */
 #endif
 
 #endif
