@@ -1,6 +1,8 @@
 
-This a simple sparse library for teaching purposes. It includes sparse matrix
-storage formats, operations on said formats and solvers for said formats.
+This is a simple sparse library developed at the Institute for Numerical
+Mathematics, University of Ulm, for teaching purposes. It contains sparse
+matrix storage formats, operations for said formats, mesh generation
+routines and solvers.
 
 To get started you need
     * a C build environment and
