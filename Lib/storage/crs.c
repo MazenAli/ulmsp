@@ -4,15 +4,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include<time.h>
 
 /* Conflicting typedefs for "index"*/
 #define index string_index
     #include <string.h>
 #undef index
 
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
-
 #include "crs.h"
+
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define ELAPSED(t0,t1) ((int) ((t1 - t0) / (double) CLOCKS_PER_SEC * 1000))
+
 
 pcrs
 new_crs(index nonz, index numr, index numc)

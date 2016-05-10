@@ -20,4 +20,18 @@ cgcrs(pccrs A,
       real tol,
       index maxit);
 
+/*!
+ * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
+ * Iterations are not performed on fixedNodes corresponding to
+ * dirichlet boundary conditions.
+ * Returns number of iterations.
+ */
+index
+cgcrs_constrains(pccrs A,                   /* in     */
+                 prealvector x,             /* in/out */
+                 pcrealvector b,            /* in     */
+                 pcindexvector fixedNodes,  /* in     */
+                 real tol,                  /* in     */
+                 index maxit);              /* in     */
+
 #endif

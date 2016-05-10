@@ -12,8 +12,6 @@ new_coo(index nonz, index numr, index numc)
 {
     pcoo A;
 
-    assert(nonz<=numr*numc);
-
     A = (pcoo) malloc(sizeof(coo));
     init_coo(A, nonz, numr, numc);
 
@@ -25,7 +23,6 @@ void
 init_coo(pcoo A, index nonz, index numr, index numc)
 {
     assert(A);
-    assert(nonz<=numr*numc);
 
     if (nonz>0) {
         assert(numr>0);
@@ -50,10 +47,20 @@ void
 resize_coo(pcoo A, index nonz, index numr, index numc)
 {
     assert(A);
-    assert(nonz<=numr*numc);
 
-    del_coo(A);
-    init_coo(A, nonz, numr, numc);
+    if (nonz>0) {
+      assert(numr>0);
+      assert(numc>0);
+      A->vals = (real*)  realloc(A->vals,nonz*sizeof(real));
+      A->rows = (index*) realloc(A->rows,nonz*sizeof(index));
+      A->cols = (index*) realloc(A->cols,nonz*sizeof(index));
+      A->nonz = nonz;
+      A->numr = numr;
+      A->numc = numc;
+    } else {
+        del_coo(A);
+        init_coo(A, nonz, numr, numc);
+    }
 }
 
 

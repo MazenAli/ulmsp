@@ -32,7 +32,7 @@ gecrsmv(transpose t,
     }
 
     /* Scale y */
-    scal_realvector(beta, y);
+    if (beta!=(real) 1) scal_realvector(beta, y);
 
     /* Perform y <- alpha*A*x + y */
     if (t==notrans) {

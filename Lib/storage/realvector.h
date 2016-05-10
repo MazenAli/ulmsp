@@ -17,8 +17,8 @@ typedef const realvector   *pcrealvector; /*!< Const pointer to realvector. */
  */
 struct _realvector
 {
-    real    *vals;   /*!< Pointer to vector entries */
-    index    length; /*!< Length of vector */
+    real    *vals;   /*!< Pointer to vector entries. */
+    index    length; /*!< Length of vector. */
 };
 
 
@@ -63,6 +63,14 @@ addentry_realvector(prealvector x, index i, real entry);
 /*! Print vector.*/
 void
 print_realvector(pcrealvector x);
+
+/* Load realvector from file, return pointer. */
+prealvector
+load_realvector(char *fname);
+
+/* Write realvector to file, return status. */
+int
+write_realvector(char *fname, prealvector v);
 /**@}*/
 
 

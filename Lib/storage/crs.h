@@ -7,6 +7,8 @@
 
 #include "../settings.h"
 #include "coo.h"
+#include "indexvector.h"
+#include "realvector.h"
 
 typedef struct _crs crs;    /*!< Struct typedef: use crs to declare. */
 typedef crs         *pcrs;  /*!< Pointer to crs. */
@@ -17,12 +19,12 @@ typedef const crs   *pccrs; /*!< Const pointer to crs. */
  */
 struct _crs
 {
-    real    *vals;    /*!< Pointer to matrix entries */
-    index    *rowptr; /*!< Pointer to row indices */
-    index    *colind; /*!< Pointer to column indices */
-    index    nonz;    /*!< Number of non zeros */
-    index    numr;    /*!< Number of rows */
-    index    numc;    /*!< Number of columns */
+    real    *vals;    /*!< Pointer to matrix entries. */
+    index    *rowptr; /*!< Pointer to row indices. */
+    index    *colind; /*!< Pointer to column indices. */
+    index    nonz;    /*!< Number of non zeros. */
+    index    numr;    /*!< Number of rows. */
+    index    numc;    /*!< Number of columns. */
 };
 
 /*! \name Constructors and destructors. */

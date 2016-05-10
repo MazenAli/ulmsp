@@ -73,6 +73,25 @@ copy_realvector(prealvector dest, pcrealvector src)
 
 
 void
+swap_realvector(prealvector x, prealvector y)
+{
+    index tmp_length;
+    real *tmp_vals;
+
+    assert(x);
+    assert(y);
+
+    tmp_length = x->length;
+    x->length  = y->length;
+    y->length  = tmp_length;
+
+    tmp_vals = x->vals;
+    x->vals  = y->vals;
+    y->vals  = tmp_vals;
+}
+
+
+void
 del_realvector(prealvector x)
 {
     assert(x);
@@ -122,6 +141,58 @@ print_realvector(pcrealvector x)
     for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
         (void) printf("%8.4f\n", getentry_realvector(x, i));
     }
+}
+
+
+prealvector
+load_realvector(char *fname)
+{
+  prealvector x;
+  FILE *file;
+  index cnt;
+  real a;
+
+  file = fopen(fname,"r");
+
+  if (file == NULL){
+    printf("\n fopen() Error!!!\n\n");
+    return NULL;
+  }
+
+  cnt = 0;
+  while (fscanf(file,"%lf",&a) != EOF) cnt++;
+
+  x = (prealvector) malloc(sizeof(realvector));
+  init_realvector(x, cnt);
+
+  fseek(file,0L,SEEK_SET);
+  cnt = 0;
+  while (fscanf(file,"%lf",&(x->vals[cnt])) != EOF) cnt++;
+  fclose(file);
+  return x;
+}
+
+
+int
+write_realvector(char *fname, prealvector v)
+{
+  FILE *file;
+  index i;
+  real *vx;
+
+  file = fopen(fname,"w");
+
+  if (file == NULL){
+    printf("\n write_realvector() Error!!!\n\n");
+    return 0;
+  }
+
+  vx = v->vals; 
+  for ( i = 0 ; i < v->length ; i++ ) {
+    fprintf(file,"%22.15f\n", vx[i]);
+  }
+  fclose(file);
+  return 1;
 }
 
 

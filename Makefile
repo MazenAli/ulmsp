@@ -7,6 +7,9 @@ ULMSP_STORAGE = \
 	Lib/storage/coo.c \
 	Lib/storage/crs.c \
 	Lib/storage/realvector.c \
+	Lib/storage/indexvector.c \
+	Lib/storage/realmatrix.c \
+	Lib/storage/indexmatrix.c \
 
 ULMSP_OPS= \
 	Lib/ops/gecoomv.c \
@@ -15,11 +18,16 @@ ULMSP_OPS= \
 ULMSP_SOLVERS= \
 	Lib/solvers/cgcrs.c \
 	Lib/solvers/cgcoo.c \
+	Lib/solvers/gausscrs.c \
+
+ULMSP_MESH= \
+	Lib/mesh/mesh.c \
 
 SOURCES_libulmsp := \
 	$(ULMSP_STORAGE) \
 	$(ULMSP_OPS) \
 	$(ULMSP_SOLVERS) \
+	$(ULMSP_MESH) \
 
 HEADERS_libulmsp := $(SOURCES_libulmsp:.c=.h)
 
@@ -37,6 +45,10 @@ SOURCES_stable := \
 	Tests/setup_realvector.c \
 	Tests/laplace_crs.c \
 	Tests/coo2crs.c \
+	Tests/testSolveGauss.c \
+	Tests/refinetria.c \
+	Tests/solveLaplace.c \
+	Tests/solveLaplace_CG_BPX.c \
 
 SOURCES_tests = $(SOURCES_stable) \
 
@@ -116,13 +128,17 @@ $(OBJECTS_tests): %.o: %.c
 ifdef BRIEF_OUTPUT
 	@echo Compiling $<
 	@$(GCC) -MT $@ -MM -I Lib -I Lib/storage -I Lib/ops -I Lib/solvers \
+			-I Lib/mesh \
 			$< > $(<:%.c=%.d)
 	@$(CC) $(CFLAGS) -I Lib -I Lib/storage -I Lib/ops -I Lib/solvers \
+			-I Lib/mesh \
 			-c $< -o $@
 else
 	@$(GCC) -MT $@ -MM -I Lib -I Lib/storage -I Lib/ops -I Lib/solvers \
+			-I Lib/mesh \
 			$< > $(<:%.c=%.d)
 	$(CC) $(CFLAGS) -I Lib -I Lib/storage -I Lib/ops -I Lib/solvers \
+			-I Lib/mesh \
 			-c $< -o $@
 endif
 
@@ -152,13 +168,17 @@ $(OBJECTS_libulmsp): %.o: %.c
 ifdef BRIEF_OUTPUT
 	@echo Compiling $<
 	@$(GCC) -MT $@ -MM -I Lib -I Lib/storage -I Lib/ops -I Lib/solvers \
+			-I Lib/mesh \
 			$< > $(<:%.c=%.d)
 	@$(CC) $(CFLAGS) -I Lib -I Lib/storage -I Lib/ops -I Lib/solvers \
+			-I Lib/mesh \
 			-c $< -o $@
 else
 	@$(GCC) -MT $@ -MM -I Lib -I Lib/storage -I Lib/ops -I Lib/solvers \
+			-I Lib/mesh \
 			$< > $(<:%.c=%.d)
 	$(CC) $(CFLAGS) -I Lib -I Lib/storage -I Lib/ops -I Lib/solvers \
+			-I Lib/mesh \
 			-c $< -o $@
 endif
 
