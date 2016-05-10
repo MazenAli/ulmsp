@@ -15,9 +15,11 @@
  *
  * Set settings, make it and have fun!
  *
+ * This project uses Semantic Versioning. For details see http://semver.org/
+ *
  * \authors    Mazen Ali
  * \authors    Stefan Funken
- * \version    0.2
+ * \version    0.2.0
  * \date       May 2016
  * \copyright  GNU Public Licence
  */

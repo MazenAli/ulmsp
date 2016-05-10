@@ -12,3 +12,5 @@ Before building, checkout the files options.inc and system.inc for compilation
 and system settings.
 
 git it, make it and have fun!
+
+This project uses Semantic Versioning. For details see http://semver.org/
