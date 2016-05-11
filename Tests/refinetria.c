@@ -14,9 +14,36 @@
 #define ELAPSED(t0,t1) ((int) ((t1 - t0) / (double) CLOCKS_PER_SEC * 1000))
 
 
-real VolForce(real *x){
-  return x[0];  /* f(x,y) = x */
+
+real
+f1(real x[2], real m)
+{
+    (void) m;
+    return x[0];  /* f(x,y) =  */
 }
+
+
+real*
+f2(real x[2], real m)
+{
+    (void) x;
+    (void) m;
+    static real ret[2];
+    ret[0] = (real) 0;
+    ret[1] = (real) 1;
+
+    return ret;
+}
+
+
+real
+g(real *x, real m)
+{
+    (void) m;
+    (void) x;
+    return 1.;   /* g(x,y) = 1 , value on Neumann boundary */
+}
+
 
 real uD(real *x){
   (void) x;
@@ -35,7 +62,7 @@ main()
     pcrs A = new_crs(1,1,1);
     prealvector rhs = new_realvector(1);
     pindexmatrix elements;
-    pindexvector material;
+    prealvector  material;
     pindexmatrix elements2edges;
     pindexmatrix edgeno;
     pindexvector bdrytyp = new_indexvector(1);
@@ -66,12 +93,12 @@ main()
     print_indexmatrix(elements);
 
     /* material */
-    material = new_indexvector(1);
+    material = new_realvector(1);
 
     material->vals[0] = INDEX_BASE+13;
 
     printf("material:\n");
-    print_indexvector(material);
+    print_realvector(material);
 
     /* elements2edges */
     elements2edges = new_indexmatrix(3,1);
@@ -122,7 +149,7 @@ main()
 
       getFixed(coordinates->cols, bdrytyp, bdrylist, fixedNodes);
 
-      buildRhs(coordinates, elements, VolForce, rhs); 
+      buildRhs(coordinates, elements, bdrylist, material, f1, f2, g, rhs);
       setDirichletData2Rhs(coordinates, fixedNodes, uD, rhs);
 
       TIME[4] = clock();
@@ -164,7 +191,7 @@ main()
 
     del_realmatrix(coordinates);
     del_indexmatrix(elements);
-    del_indexvector(material);
+    del_realvector(material);
     del_indexmatrix(elements2edges);
  
     return 0;

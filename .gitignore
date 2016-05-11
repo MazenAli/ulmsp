@@ -9,3 +9,12 @@
 html
 *.out
 *_fine.dat
+Tests/coo2crs
+Tests/laplace_crs
+Tests/refinetria
+Tests/setup_coo
+Tests/setup_crs
+Tests/setup_realvector
+Tests/solveLaplace
+Tests/solveLaplaceL
+Tests/testSolveGauss

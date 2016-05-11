@@ -20,6 +20,9 @@ ULMSP_SOLVERS= \
 	Lib/solvers/cgcoo.c \
 	Lib/solvers/gausscrs.c \
 
+ULMSP_SETTINGS= \
+	Lib/settings.c
+
 ULMSP_MESH= \
 	Lib/mesh/mesh.c \
 
@@ -28,6 +31,7 @@ SOURCES_libulmsp := \
 	$(ULMSP_OPS) \
 	$(ULMSP_SOLVERS) \
 	$(ULMSP_MESH) \
+	$(ULMSP_SETTINGS) \
 
 HEADERS_libulmsp := $(SOURCES_libulmsp:.c=.h)
 
@@ -49,7 +53,6 @@ SOURCES_stable := \
 	Tests/refinetria.c \
 	Tests/solveLaplace.c \
 	Tests/solveLaplaceL.c \
-	Tests/solveLaplace_CG_BPX.c \
 
 SOURCES_tests = $(SOURCES_stable) \
 
@@ -118,9 +121,9 @@ programs: $(PROGRAMS_tests)
 $(PROGRAMS_tests): %: %.o
 ifdef BRIEF_OUTPUT
 	@echo Linking $@
-	@$(CC) $(LDFLAGS) -Wl,-L,.,-rpath,. $< -o $@.out -lulmsp $(LIBS)
+	@$(CC) $(LDFLAGS) -Wl,-L,.,-rpath,. $< -o $@ -lulmsp $(LIBS)
 else
-	$(CC) $(LDFLAGS) -Wl,-L,.,-rpath,. $< -o $@.out -lulmsp $(LIBS)
+	$(CC) $(LDFLAGS) -Wl,-L,.,-rpath,. $< -o $@ -lulmsp $(LIBS)
 endif
 
 $(PROGRAMS_tests) $(PROGRAMS_tools): libulmsp.a

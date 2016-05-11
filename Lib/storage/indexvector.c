@@ -100,6 +100,7 @@ index
 getentry_indexvector(pcindexvector x, index i)
 {
     assert(x);
+    check_base(i);
     assert(i<x->length+INDEX_BASE);
 
     return x->vals[i-INDEX_BASE];
@@ -110,6 +111,7 @@ void
 setentry_indexvector(pindexvector x, index i, index entry)
 {
     assert(x);
+    check_base(i);
     assert(i<x->length+INDEX_BASE);
 
     x->vals[i-INDEX_BASE] = entry;
@@ -120,9 +122,23 @@ void
 addentry_indexvector(pindexvector x, index i, index entry)
 {
     assert(x);
+    check_base(i);
     assert(i<x->length+INDEX_BASE);
 
     x->vals[i-INDEX_BASE] += entry;
+}
+
+
+void
+fill_indexvector(pindexvector x, index val)
+{
+    index i;
+
+    assert(x);
+
+    for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
+        setentry_indexvector(x, i, val);
+    }
 }
 
 

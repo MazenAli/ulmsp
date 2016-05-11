@@ -40,6 +40,10 @@ resize_realvector(prealvector x, index length);
 void
 copy_realvector(prealvector dest, pcrealvector src);
 
+/*! Swap data x<->y. */
+void
+swap_realvector(prealvector x, prealvector y);
+
 /*! Free memory. */
 void
 del_realvector(prealvector x);
@@ -59,6 +63,10 @@ setentry_realvector(prealvector x, index i, real entry);
 /*! Add to entry \f$ x_i \f$. */
 void
 addentry_realvector(prealvector x, index i, real entry);
+
+/*! Fill vector \f$ x_i=val \f$ for all \f$ i \f$. */
+void
+fill_realvector(prealvector x, real val);
 
 /*! Print vector.*/
 void

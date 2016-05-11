@@ -5,12 +5,13 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "mesh.h"
 
 void refine_uniform(prealmatrix   coordinates,      /* in / out */
                     pindexmatrix  elements,         /* in / out */
-                    pindexvector  material,         /* in / out */
+                    prealvector   material,         /* in / out */
                     pindexmatrix  elements2edges,   /* in / out */
                     pindexmatrix  edgeno,           /* out      */
                     pindexmatrix *bdrylist,         /* in / out */
@@ -20,12 +21,13 @@ void refine_uniform(prealmatrix   coordinates,      /* in / out */
     int iBdry;
     index *B, *B2e, *nB, *nB2e;
     index nEdges, nTria, nCoord;
-    index *E, *E2e, *M, *nE, *nE2e, *nM, *nEno;
+    index *E, *E2e, *nE, *nE2e, *nEno;
+    real *M, *nM;
     real *C, *nC;
     index i, i0, i1, k, p;
     int isucc[3] = {1,2,0}, iprae[3] = {2,0,1};
     prealmatrix new_coordinates;
-    pindexvector new_material;
+    prealvector new_material;
     pindexmatrix new_elements, new_elements2edges, new_bdrylist, new_edgeno;
     pindexvector new_bdry2edgeslist;
 
@@ -39,31 +41,31 @@ void refine_uniform(prealmatrix   coordinates,      /* in / out */
     nCoord = coordinates->cols;    /* Number of coordinates */
     nTria  = elements->cols;       /* Number of triangles */
 
-    E2e = elements2edges->vals; 
+    E2e = elements2edges->vals;
     nEdges = 0;                    /* Number of edges */
-    for (i=0 ; i<3*(elements2edges->cols); i++) 
+    for (i=0 ; i<3*(elements2edges->cols); ++i)
        if ( E2e[i]> nEdges) nEdges = E2e[i];
     nEdges+=1-INDEX_BASE;
 
     /* Allocate storage for refined mesh */
     new_coordinates = new_realmatrix(2,nCoord+nEdges);
     new_elements = new_indexmatrix(3,4*nTria);
-    new_material = new_indexvector(4*nTria);
+    new_material = new_realvector(4*nTria);
     new_elements2edges = new_indexmatrix(3,4*nTria);
     new_edgeno = new_indexmatrix(2,nEdges);
 
     /* Declare local variables for convinience */
     C = coordinates->vals; nC = new_coordinates->vals;
-    E = elements->vals; nE = new_elements->vals; 
-    M = material->vals; nM = new_material->vals; 
+    E = elements->vals; nE = new_elements->vals;
+    M = material->vals; nM = new_material->vals;
     nE2e = new_elements2edges->vals;
     nEno = new_edgeno->vals;
 
     /* Get endpoints for each edge, i.e. compute edgeno */
-    for (i=0 ; i<nTria ; i++){
-      for (k=0 ; k<3 ; k++){
+    for (i=0 ; i<nTria ; ++i){
+      for (k=0 ; k<3 ; ++k){
         p=3*i+k;
-        nEno[2*(E2e[p]-INDEX_BASE)  ] = E[p]; 
+        nEno[2*(E2e[p]-INDEX_BASE)  ] = E[p];
         nEno[2*(E2e[p]-INDEX_BASE)+1] = E[3*i+isucc[k]];
       }
     }
@@ -72,8 +74,8 @@ void refine_uniform(prealmatrix   coordinates,      /* in / out */
     for (i=0 ; i<2*nCoord ; i++) nC[i] = C[i];
     /* Compute new coordinates */
     for (i=0 ; i<nEdges ; i++){
-      i0 = nEno[2*i]  -INDEX_BASE; 
-      i1 = nEno[2*i+1]-INDEX_BASE;  
+      i0 = nEno[2*i]  -INDEX_BASE;
+      i1 = nEno[2*i+1]-INDEX_BASE;
       nC[2*nCoord+2*i  ] = 0.5*(C[2*i0  ] + C[2*i1  ]);
       nC[2*nCoord+2*i+1] = 0.5*(C[2*i0+1] + C[2*i1+1]);
     }
@@ -114,7 +116,7 @@ void refine_uniform(prealmatrix   coordinates,      /* in / out */
       nB = new_bdrylist->vals; nB2e = new_bdry2edgeslist->vals;
       for (i=0 ; i<bdrylist[iBdry]->cols ; i++){
         /* Refine bdrylist[iBdry]*/
-        nB[4*i  ] = B[2*i];  
+        nB[4*i  ] = B[2*i];
         nB[4*i+1] = nCoord+B2e[i];
         nB[4*i+2] = nCoord+B2e[i];
         nB[4*i+3] = B[2*i+1];
@@ -128,13 +130,13 @@ void refine_uniform(prealmatrix   coordinates,      /* in / out */
     }
 
     swap_realmatrix(coordinates, new_coordinates);
-    swap_indexvector(material, new_material);
+    swap_realvector(material, new_material);
     swap_indexmatrix(edgeno, new_edgeno);
     swap_indexmatrix(elements, new_elements);
     swap_indexmatrix(elements2edges, new_elements2edges);
 
     del_realmatrix(new_coordinates);
-    del_indexvector(new_material);
+    del_realvector(new_material);
     del_indexmatrix(new_edgeno);
     del_indexmatrix(new_elements);
     del_indexmatrix(new_elements2edges);
@@ -169,8 +171,8 @@ void restriction(pcrealvector x,        /* in  */
   ndim = y->length;
   in = x->vals; out = y->vals; ptr = edgeno->vals;
 
-  for (i=0; i<ndim; i++) out[i] = in[i];
-  for (i=0; i<edgeno->cols; i++){
+  for (i=0; i<ndim; ++i) out[i] = in[i];
+  for (i=0; i<edgeno->cols; ++i){
     out[ndim + ptr[2*i  ]-INDEX_BASE] += 0.5*in[ndim+i];
     out[ndim + ptr[2*i+1]-INDEX_BASE] += 0.5*in[ndim+i];
   }
@@ -185,14 +187,14 @@ void stima_laplace(real p1[2],    /* in  */
   int i, j;
   real d[3][2], fac;
 
-  for (i = 0 ; i < 2 ; i++ ){
+  for (i = 0 ; i < 2 ; ++i){
      d[0][i] = p3[i]-p2[i];
      d[1][i] = p1[i]-p3[i];
      d[2][i] = p2[i]-p1[i];
   }
-  fac = 1./(2.0*(d[1][0]*d[2][1]-d[2][0]*d[1][1]));
-  for ( i = 0 ; i < 3 ; i++ ){
-    for ( j = 0 ; j < i ; j++ ){
+  fac = 1./(2.*(d[1][0]*d[2][1]-d[2][0]*d[1][1]));
+  for ( i = 0 ; i < 3 ; ++i){
+    for ( j = 0 ; j < i ; ++j){
       m[i][j] = fac * (d[i][0]*d[j][0] + d[i][1]*d[j][1]);
       m[j][i] = m[i][j];
     }
@@ -215,7 +217,7 @@ void buildStiffness(prealmatrix coordinates,        /* in  */
   C = coordinates->vals; E = elements->vals;
 
   nz = 0;
-  for (k=0; k < nT; k++){
+  for (k=0; k < nT; ++k){
     stima_laplace((real*)(C+2*(E[3*k+0]-INDEX_BASE)),
                   (real*)(C+2*(E[3*k+1]-INDEX_BASE)),
                   (real*)(C+2*(E[3*k+2]-INDEX_BASE)),M);
@@ -224,61 +226,132 @@ void buildStiffness(prealmatrix coordinates,        /* in  */
         Sx[nz] = M[i][j];
         Si[nz] = E[3*k+i];
         Sj[nz] = E[3*k+j];
-        nz++;
+        ++nz;
       }
     }
   }
 }
 
 
-
-void rhs_laplace(real p1[2],        /* in  */ 
-                   real p2[2],        /* in  */ 
-                   real p3[2],        /* in  */
-                   real (*f)(real*),  /* in  */
-                   real m[3])      /* out */ 
+void
+rhs_laplace(real  p1[2],                /* in  */
+            real  p2[2],                /* in  */
+            real  p3[2],                /* in  */
+            real  mat,                  /* in */
+            real  (*f1)(real[2], real), /* in  */
+            real* (*f2)(real[2], real), /* in  */
+            real  m[3])                 /* out */
 {
-  int i;
-  real midpoint[2], d[2][2], fac;
+    int i;
+    real midpoint[2], d[2][2], facf1, facf2, *_f2;
 
-  for (i = 0 ; i < 2 ; i++ ){
-     d[0][i] = p1[i]-p3[i];
-     d[1][i] = p2[i]-p1[i]; 
-  }
-  midpoint[0] = p1[0] + p2[0] + p3[0];
-  midpoint[1] = p1[1] + p2[1] + p3[1];
-  fac = f(midpoint)/(6.0*(d[0][0]*d[1][1]-d[1][0]*d[0][1]));
-  for ( i = 0 ; i < 3 ; i++ ){
-      m[i] = fac; 
-  }
+    for (i = 0 ; i < 2 ; ++i){
+        d[0][i] = p1[i]-p3[i];
+        d[1][i] = p2[i]-p1[i];
+    }
+    midpoint[0] = (p1[0] + p2[0] + p3[0])/3.;
+    midpoint[1] = (p1[1] + p2[1] + p3[1])/3.;
+    facf1 = f1(midpoint, mat)/6.*(d[0][0]*d[1][1]-d[1][0]*d[0][1]);
+    for ( i = 0 ; i < 3 ; ++i){
+        m[i]  = facf1;
+    }
+
+    _f2 = f2(midpoint, mat);
+
+    facf2  = (p2[1]-p3[1])*_f2[0];
+    facf2 += (p3[0]-p2[0])*_f2[1];
+    m[0]  -= 0.5*facf2;
+
+    facf2  = (p3[1]-p1[1])*_f2[0];
+    facf2 += (p1[0]-p3[0])*_f2[1];
+    m[1]  -= 0.5*facf2;
+
+    facf2  = (p1[1]-p2[1])*_f2[0];
+    facf2 += (p2[0]-p1[0])*_f2[1];
+    m[2]  -= 0.5*facf2;
 }
 
-void buildRhs(prealmatrix coordinates,        /* in  */
-              pindexmatrix elements,          /* in  */
-              real (*f)(real*),               /* in  */
-              prealvector b)                  /* out  */
+
+void
+rhs_neumann(real  p1[2],                /* in  */
+            real  p2[2],                /* in  */
+            real  mat,                  /* in  */
+            real  (*g)(real[2], real),  /* in  */
+            real* (*f2)(real[2], real), /* in  */
+            real  m[2])                 /* out */
 {
-  index k, nT, nC, idx[3], *E;
-  real M[3], *C, *bx;
+    real midpoint[2], normal[2], E, *_f2;
 
-  nC = coordinates->cols;
-  nT = elements->cols;
+    midpoint[0] = (p1[0] + p2[0])/2.;
+    midpoint[1] = (p1[1] + p2[1])/2.;
 
-  resize_realvector(b, nC);
+    normal[0] = p2[1]-p1[1];
+    normal[1] = p1[0]-p2[0];
 
-  bx = b->vals; C = coordinates->vals; E = elements->vals;
+    E = normal[0]*normal[0]+normal[1]*normal[1];
+    E = sqrt(E);
 
-  for (k=0; k < nT; k++){
-    idx[0] = E[3*k+0]-INDEX_BASE;
-    idx[1] = E[3*k+1]-INDEX_BASE;
-    idx[2] = E[3*k+2]-INDEX_BASE;
-    rhs_laplace((real*)(C+2*idx[0]),
-                (real*)(C+2*idx[1]),
-                (real*)(C+2*idx[2]), f, M);
-    bx[idx[0]] = M[0];
-    bx[idx[1]] = M[1];
-    bx[idx[2]] = M[2];
-  }
+    normal[0] /= E;
+    normal[1] /= E;
+
+    _f2 = f2(midpoint, mat);
+
+    m[0]  = _f2[0]*normal[0]+_f2[1]*normal[1];
+    m[0] += g(midpoint, mat);
+    m[0] *= 0.5*E;
+    m[1]  = m[0];
+}
+
+
+void
+buildRhs(pcrealmatrix  coordinates,    /* in  */
+         pcindexmatrix elements,       /* in  */
+         const pindexmatrix *bdrylist, /* in  */
+         pcrealvector  material,       /* in  */
+         real  (*f1)(real[2], real),   /* in  */
+         real* (*f2)(real[2], real),   /* in  */
+         real  (*g)(real[2], real),    /* in  */
+         prealvector b)                /* out  */
+{
+    index k, nT, nC, idx[3], *E;
+    real M[3], *C, *bx;
+    pcindexmatrix neumann = bdrylist[1];
+
+    nC = coordinates->cols;
+    nT = elements->cols;
+
+    resize_realvector(b, nC);
+
+    bx  = b->vals; C = coordinates->vals; E = elements->vals;
+
+    for (k=0; k < nT; ++k){
+        idx[0] = E[3*k+0]-INDEX_BASE;
+        idx[1] = E[3*k+1]-INDEX_BASE;
+        idx[2] = E[3*k+2]-INDEX_BASE;
+        rhs_laplace((real*)(C+2*idx[0]),
+                    (real*)(C+2*idx[1]),
+                    (real*)(C+2*idx[2]),
+                    material->vals[k],
+                    f1, f2,
+                    M);
+        bx[idx[0]] += M[0];
+        bx[idx[1]] += M[1];
+        bx[idx[2]] += M[2];
+    }
+
+    for (k=0; k<neumann->cols; ++k) {
+        idx[0] = neumann->vals[2*k+0]-INDEX_BASE;
+        idx[1] = neumann->vals[2*k+1]-INDEX_BASE;
+
+        rhs_neumann((real*)(C+2*idx[0]),
+                    (real*)(C+2*idx[1]),
+                    material->vals[k],
+                    g, f2,
+                    M);
+
+        bx[idx[0]] += M[0];
+        bx[idx[1]] += M[1];
+    }
 }
 
 
@@ -318,8 +391,8 @@ void getFixed(const index     nCoord,     /* in       */
   return;
 }
 
-void setDirichletData2Rhs(prealmatrix coordinates, 
-                          pindexvector fixedNodes, 
+void setDirichletData2Rhs(prealmatrix coordinates,
+                          pindexvector fixedNodes,
                           real (*f)(real*),
                           prealvector rhs)
 {
@@ -426,7 +499,7 @@ void buildStiffnessByInterpolation(pcrs Ain, pcrs Aout, pindexmatrix s2p)
 int create_hierarchy(const int       nLevel,          /* in       */
                      prealmatrix     coordinates,     /* in / out */
                      pindexmatrix    elements,        /* in / out */
-                     pindexvector    material,        /* in / out */
+                     prealvector     material,        /* in / out */
                      pindexmatrix    elements2edges,  /* in       */
                      pindexmatrix   *f2s,             /* out      */
                      const int       nBdry,           /* in       */
@@ -469,7 +542,7 @@ int create_hierarchy(const int       nLevel,          /* in       */
     }
 
     /* Build stiffness matrix for finest mesh */
-    buildStiffness(coordinates, elements, S);  
+    buildStiffness(coordinates, elements, S);
     A[0] = new_crs(1,1,1);
     init_coo2crs(A[0], S); 
 

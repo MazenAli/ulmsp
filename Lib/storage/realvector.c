@@ -105,6 +105,7 @@ real
 getentry_realvector(pcrealvector x, index i)
 {
     assert(x);
+    check_base(i);
     assert(i<x->length+INDEX_BASE);
 
     return x->vals[i-INDEX_BASE];
@@ -115,6 +116,7 @@ void
 setentry_realvector(prealvector x, index i, real entry)
 {
     assert(x);
+    check_base(i);
     assert(i<x->length+INDEX_BASE);
 
     x->vals[i-INDEX_BASE] = entry;
@@ -125,9 +127,22 @@ void
 addentry_realvector(prealvector x, index i, real entry)
 {
     assert(x);
+    check_base(i);
     assert(i<x->length+INDEX_BASE);
 
     x->vals[i-INDEX_BASE] += entry;
+}
+
+void
+fill_realvector(prealvector x, real val)
+{
+    index i;
+
+    assert(x);
+
+    for (i=INDEX_BASE; i<x->length+INDEX_BASE; ++i) {
+        setentry_realvector(x, i, val);
+    }
 }
 
 

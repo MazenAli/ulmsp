@@ -40,7 +40,7 @@ resize_indexvector(pindexvector x, index length);
 void
 copy_indexvector(pindexvector dest, pcindexvector src);
 
-/*! Swap data A<->B. */
+/*! Swap data x<->y. */
 void
 swap_indexvector(pindexvector x, pindexvector y);
 
@@ -63,6 +63,10 @@ setentry_indexvector(pindexvector x, index i, index entry);
 /*! Add to entry \f$ x_i \f$. */
 void
 addentry_indexvector(pindexvector x, index i, index entry);
+
+/*! Fill vector \f$ x_i=val \f$ for all \f$ i \f$. */
+void
+fill_indexvector(pindexvector x, index val);
 
 /*! Print vector.*/
 void

@@ -220,6 +220,8 @@ getentry_crs(pccrs A, index i, index j)
     index    ii;
     real entry;
 
+    check_base(i);
+    check_base(j);
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
 
@@ -241,6 +243,8 @@ setentry_crs(pcrs A, index i, index j, real entry)
 {
     index    ii;
 
+    check_base(i);
+    check_base(j);
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
 
@@ -261,6 +265,8 @@ addentry_crs(pcrs A, index i, index j, real entry)
 {
     index    ii;
 
+    check_base(i);
+    check_base(j);
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
 

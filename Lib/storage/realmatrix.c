@@ -105,6 +105,8 @@ real
 getentry_realmatrix(pcrealmatrix A, index i, index j)
 {
     assert(A);
+    check_base(i);
+    check_base(j);
     assert(i < A->rows+INDEX_BASE);
     assert(j < A->cols+INDEX_BASE);
 
@@ -116,6 +118,8 @@ void
 setentry_realmatrix(prealmatrix A, index i, index j, real entry)
 {
     assert(A);
+    check_base(i);
+    check_base(j);
     assert(i < A->rows+INDEX_BASE);
     assert(j < A->cols+INDEX_BASE);
 
@@ -127,6 +131,8 @@ void
 addentry_realmatrix(prealmatrix A, index i, index j, real entry)
 {
     assert(A);
+    check_base(i);
+    check_base(j);
     assert(i<A->rows+INDEX_BASE);
     assert(j<A->cols+INDEX_BASE);
 

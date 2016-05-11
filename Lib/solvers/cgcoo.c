@@ -44,7 +44,7 @@ cgcoo(pccoo A,
 
         if (residual<=tol) {
             #ifdef VERBOSE
-                (void) printf("cg: r = %f\n", residual);
+                (void) printf("cg: r = %.16f\n", residual);
             #endif
 
             del_realvector(r);
@@ -72,7 +72,8 @@ cgcoo(pccoo A,
     }
 
     fprintf(stderr,
-            "Max iterations reached: maxit = %ld, r = %f\n", maxit, residual);
+            "Max iterations reached: maxit = %ld, r = %.16f\n",
+            maxit, residual);
 
     del_realvector(r);
     del_realvector(p);

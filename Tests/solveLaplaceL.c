@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "settings.h"
 #include "mesh.h"
@@ -15,17 +16,43 @@
 #define ELAPSED(t0,t1) ((int) ((t1 - t0) / (double) CLOCKS_PER_SEC * 1000))
 
 
-real VolForce(real *x){
-  return x[0];  /* f(x,y) =  */
+real
+f1(real x[2], real m)
+{
+    (void) m;
+    (void) x;
+    return 1.;  /* f(x,y) =  */
 }
 
-real NeumannData(real *x, real *n){
-  return 1.0+0.0*x[0]*n[0];   /* g(x,y) = 1 , value on Neumann boundary */
+
+real*
+f2(real x[2], real m)
+{
+    (void) x;
+    (void) m;
+    static real ret[2];
+    ret[0] = (real) 0;
+    ret[1] = (real) 1;
+
+    return ret;
 }
 
-real uD(real *x){
-  return 0.0+0.0*x[0];   /* u(x,y) = 0, value on Dirichlet boundary */
+
+real
+g(real *x, real m)
+{
+    (void) m;
+    (void) x;
+    return -1.;   /* value on Neumann boundary */
 }
+
+
+real
+uD(real *x)
+{
+    return cos(x[0]);   /* value on Dirichlet boundary */
+}
+
 
 int
 main(int argc, char **argv)
@@ -37,8 +64,8 @@ main(int argc, char **argv)
     pcrs A = new_crs(1,1,1);
     pindexmatrix edgeno = new_indexmatrix(0,0);
     pindexvector fixedNodes = new_indexvector(0);
-    pindexvector material
-            = load_indexvector("./Tests/Example2/material.dat");
+    prealvector material
+            = load_realvector("./Tests/Example2/material.dat");
     prealmatrix coordinates
             = load_realmatrix("./Tests/Example2/coordinates.dat", 2, 1);
     pindexmatrix elements
@@ -81,7 +108,7 @@ main(int argc, char **argv)
     printf("====================\n");
     printf("material:\n");
     printf("====================\n");
-    print_indexvector(material);
+    print_realvector(material);
     printf("====================\n");
     printf("bdrylist:\n");
     printf("====================\n");
@@ -113,7 +140,7 @@ main(int argc, char **argv)
     write_realmatrix("./Tests/Example2/coordinates_fine.dat",coordinates,1);
     write_indexmatrix("./Tests/Example2/elements_fine.dat",elements,1);
     write_indexmatrix("./Tests/Example2/elements2edges_fine.dat",elements,1);
-    write_indexvector("./Tests/Example2/material_fine.dat",material);
+    write_realvector("./Tests/Example2/material_fine.dat",material);
     write_indexmatrix("./Tests/Example2/Dirichlet_fine.dat",bdrylist[0],1);
     write_indexmatrix("./Tests/Example2/Neumann_fine.dat",bdrylist[1],1);
     write_indexvector("./Tests/Example2/Dirichlet2edges_fine.dat",bdry2edgeslist[0]);
@@ -121,6 +148,8 @@ main(int argc, char **argv)
 
     rhs = new_realvector(coordinates->cols);
     sol = new_realvector(coordinates->cols);
+    fill_realvector(sol, 0.);
+    fill_realvector(rhs, 0.);
 
     TIME[2] = clock();
 
@@ -136,15 +165,13 @@ main(int argc, char **argv)
 
     TIME[5] = clock();
 
-    buildRhs(coordinates, elements, VolForce, rhs);
-    copy_realvector(sol, rhs);
+    buildRhs(coordinates, elements, bdrylist, material, f1, f2, g, rhs);
     setDirichletData2Rhs(coordinates, fixedNodes, uD, sol);
 
     TIME[6] = clock();
 
-    nItCG = cgcrs_constrains(A,sol,rhs, fixedNodes,1e-6,coordinates->cols);
+    nItCG = cgcrs_constrains(A, sol, rhs, fixedNodes, 1e-6, coordinates->cols);
     printf("No. iterations %i\n", nItCG);
-
 
     TIME[7] = clock();
 
@@ -176,7 +203,7 @@ main(int argc, char **argv)
     del_realmatrix(coordinates);
     del_indexmatrix(elements);
     del_indexmatrix(elements2edges);
-    del_indexvector(material);
+    del_realvector(material);
 
     return 0;
 }

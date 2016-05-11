@@ -22,4 +22,8 @@ typedef enum
                               Set in options.inc. Default is 0. */
 #endif
 
+/*! Check if i is valid against INDEX_BASE. */
+void
+check_base(index i);
+
 #endif

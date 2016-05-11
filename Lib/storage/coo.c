@@ -84,6 +84,8 @@ getentry_coo(pccoo A, index i, index j)
     index    ii;
     real entry;
 
+    check_base(i);
+    check_base(j);
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
 
@@ -104,6 +106,8 @@ setentry_coo(pcoo A, index i, index j, real entry)
 {
     index    ii;
 
+    check_base(i);
+    check_base(j);
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
 
@@ -123,6 +127,8 @@ addentry_coo(pcoo A, index i, index j, real entry)
 {
     index    ii;
 
+    check_base(i);
+    check_base(j);
     assert(i<A->numr+INDEX_BASE);
     assert(j<A->numc+INDEX_BASE);
 

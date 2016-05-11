@@ -32,15 +32,15 @@ cgcrs(pccrs A,
     for (i=0; i<=maxit; ++i) {
 
         if (rho_new<=tol*tol) {
-          #ifdef VERBOSE
-            printf("cg: r = %f\n", sqrt(rho_new));
-          #endif
+            #ifdef VERBOSE
+                printf("cg: r = %.16f\n", sqrt(rho_new));
+            #endif
 
-          del_realvector(r);
-          del_realvector(p);
-          del_realvector(a);
+            del_realvector(r);
+            del_realvector(p);
+            del_realvector(a);
 
-          return i;
+            return i;
         }
 
         /* alpha_k */
@@ -61,7 +61,7 @@ cgcrs(pccrs A,
     }
 
     fprintf(stderr,
-            "Max iterations reached: maxit = %ld, r = %f\n", maxit,
+            "Max iterations reached: maxit = %ld, r = %.16f\n", maxit,
                                                              sqrt(rho_new));
 
     del_realvector(r);
@@ -85,8 +85,7 @@ cgcrs_constrains(pccrs A,                   /* in     */
     prealvector r = new_realvector(x->length);
     prealvector p = new_realvector(x->length);
     prealvector a = new_realvector(x->length);
-
-    transpose t = notrans;
+    transpose   t = notrans;
 
     /* Initial residual, r = b-A*x */
     copy_realvector(r, b);
@@ -94,7 +93,7 @@ cgcrs_constrains(pccrs A,                   /* in     */
 
     /* Incorporate constrains */
     for ( k =  0 ; k < fixedNodes->length; k++){
-      r->vals[fixedNodes->vals[k]-INDEX_BASE] = 0.;
+        r->vals[fixedNodes->vals[k]-INDEX_BASE] = 0.;
     }
     copy_realvector(p, r);
 
@@ -103,15 +102,15 @@ cgcrs_constrains(pccrs A,                   /* in     */
     for (i=0; i<=maxit; ++i) {
 
         if (rho_new<=tol*tol) {
-          #ifdef VERBOSE
-            printf("cg:  r = %f\n", sqrt(rho_new));
-          #endif
+            #ifdef VERBOSE
+                printf("cg:  r = %.16f\n", sqrt(rho_new));
+            #endif
 
-          del_realvector(r);
-          del_realvector(p);
-          del_realvector(a);
+            del_realvector(r);
+            del_realvector(p);
+            del_realvector(a);
 
-          return i;
+            return i;
         }
 
         /* alpha_k */
@@ -119,7 +118,7 @@ cgcrs_constrains(pccrs A,                   /* in     */
 
         /* Incorporate constrains */
         for ( k =  0 ; k < fixedNodes->length; k++){
-          a->vals[fixedNodes->vals[k]-INDEX_BASE] = 0.;
+            a->vals[fixedNodes->vals[k]-INDEX_BASE] = 0.;
         }
         lambda = rho_new/dot_realvector(p, a);
 
@@ -137,7 +136,7 @@ cgcrs_constrains(pccrs A,                   /* in     */
     }
 
     fprintf(stderr,
-            "Max iterations reached: maxit = %ld, r = %f\n", maxit,
+            "Max iterations reached: maxit = %ld, r = %.16f\n", maxit,
                                                              sqrt(rho_new));
 
     del_realvector(r);
