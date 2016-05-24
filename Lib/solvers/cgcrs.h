@@ -7,6 +7,7 @@
 
 #include "../settings.h"
 #include "../storage/realvector.h"
+#include "../storage/indexvector.h"
 #include "../storage/crs.h"
 
 /*!
@@ -19,6 +20,18 @@ cgcrs(pccrs A,
       pcrealvector b,
       real tol,
       index maxit);
+
+/*!
+ * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
+ * Uses the Jacobi preconditioner.
+ * Returns number of iterations.
+ */
+index
+pcgdiagcrs(pccrs A,                   /* in     */
+           prealvector x,             /* in/out */
+           pcrealvector b,            /* in     */
+           real tol,                  /* in     */
+           index maxit);              /* in     */
 
 /*!
  * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
@@ -38,16 +51,31 @@ cgcrs_constrains(pccrs A,                   /* in     */
  * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
  * Iterations are not performed on fixedNodes corresponding to
  * dirichlet boundary conditions.
- * The Gauss-Seidel method is used as a preconditioner.
+ * Uses the Jacobi preconditioner.
  * Returns number of iterations.
  */
 index
-pcggscrs_constrains(pccrs A,                   /* in     */
-                    prealvector x,             /* in/out */
-                    pcrealvector b,            /* in     */
-                    pcindexvector fixedNodes,  /* in     */
-                    real tol,                  /* in     */
-                    index itgs,                /* in     */
-                    index maxit);              /* in     */
+pcgdiagcrs_constrains(pccrs A,                   /* in     */
+                      prealvector x,             /* in/out */
+                      pcrealvector b,            /* in     */
+                      pcindexvector fixedNodes,  /* in     */
+                      real tol,                  /* in     */
+                      index maxit);              /* in     */
+
+
+/*!
+ * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
+ * Iterations are not performed on fixedNodes corresponding to
+ * dirichlet boundary conditions.
+ * Uses the symmetric GS preconditioner.
+ * Returns number of iterations.
+ */
+index
+pcgsymgscrs_constrains(pccrs A,                   /* in     */
+                       prealvector x,             /* in/out */
+                       pcrealvector b,            /* in     */
+                       pcindexvector fixedNodes,  /* in     */
+                       real tol,                  /* in     */
+                       index maxit);              /* in     */
 
 #endif

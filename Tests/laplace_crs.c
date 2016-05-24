@@ -21,10 +21,10 @@ int
 main(int argc, char **argv)
 {
     int N, maxit, print;
-    index i, it;
+    index i, itcg, itpcg;
     real alpha, beta, tol;
     pcrs A;
-    prealvector x, y;
+    prealvector x, y, z;
     transpose t;
 
     if (argc!=4) {
@@ -51,6 +51,7 @@ main(int argc, char **argv)
     /* Set up, perform and print y <- alpha*A*x+beta*y */
     x = new_realvector(N*N);
     y = new_realvector(N*N);
+    z = new_realvector(N*N);
 
     t = notrans;
 
@@ -66,9 +67,13 @@ main(int argc, char **argv)
     }
 
     /* Apply CG solver */
-    it = cgcrs(A, y, x, tol, maxit);
+    fill_realvector(y, 0.);
+    fill_realvector(z, 0.);
+    itcg = cgcrs(A, y, x, tol, maxit);
+    itpcg = pcgdiagcrs(A, z, x, tol, maxit);
 
-    (void) printf("Solution after %ld iterations\n", it);
+    (void) printf("Solution cg  after %ld iterations\n", itcg);
+    (void) printf("Solution pcg after %ld iterations\n", itpcg);
     if (print) {
         (void) printf("x =\n");
         print_realvector(y);

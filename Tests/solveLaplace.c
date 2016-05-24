@@ -16,7 +16,6 @@
 #include "gecrsmv.h"
 #include "gecoomv.h"
 #include "cgcrs.h"
-#include "gscrs.h"
 
 #define ELAPSED(t0,t1) ((int) ((t1 - t0) / (double) CLOCKS_PER_SEC * 1000))
 
@@ -33,9 +32,9 @@ f1(real x[2], real m)
 real*
 f2(real x[2], real m)
 {
+    static real ret[2];
     (void) x;
     (void) m;
-    static real ret[2];
     ret[0] = (real) 0;
     ret[1] = (real) 0;
 
@@ -186,8 +185,8 @@ main(int argc, char **argv)
 
     TIME[7] = clock();
 
-    nItCG = pcggscrs_constrains(A, solpcg, rhs, fixedNodes, 1e-6, 5,
-                                coordinates->cols);
+    nItCG = pcgsymgscrs_constrains(A, solpcg, rhs, fixedNodes, 1e-6,
+                                   coordinates->cols);
 
     printf("No. iterations PCG %i\n", nItCG);
 

@@ -20,6 +20,7 @@ ULMSP_SOLVERS= \
 	Lib/solvers/cgcoo.c \
 	Lib/solvers/gausscrs.c \
 	Lib/solvers/gscrs.c \
+	Lib/solvers/precs.c \
 
 ULMSP_SETTINGS= \
 	Lib/settings.c

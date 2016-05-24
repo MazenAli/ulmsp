@@ -8,6 +8,7 @@
 
 #include "../settings.h"
 #include "../storage/realvector.h"
+#include "../storage/indexvector.h"
 #include "../storage/crs.h"
 
 /*!

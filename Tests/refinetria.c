@@ -26,9 +26,9 @@ f1(real x[2], real m)
 real*
 f2(real x[2], real m)
 {
+    static real ret[2];
     (void) x;
     (void) m;
-    static real ret[2];
     ret[0] = (real) 0;
     ret[1] = (real) 1;
 
