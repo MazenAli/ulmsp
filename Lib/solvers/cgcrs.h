@@ -34,4 +34,20 @@ cgcrs_constrains(pccrs A,                   /* in     */
                  real tol,                  /* in     */
                  index maxit);              /* in     */
 
+/*!
+ * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
+ * Iterations are not performed on fixedNodes corresponding to
+ * dirichlet boundary conditions.
+ * The Gauss-Seidel method is used as a preconditioner.
+ * Returns number of iterations.
+ */
+index
+pcggscrs_constrains(pccrs A,                   /* in     */
+                    prealvector x,             /* in/out */
+                    pcrealvector b,            /* in     */
+                    pcindexvector fixedNodes,  /* in     */
+                    real tol,                  /* in     */
+                    index itgs,                /* in     */
+                    index maxit);              /* in     */
+
 #endif

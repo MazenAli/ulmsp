@@ -75,7 +75,7 @@ init_coo2crs(pcrs A, pccoo T)
 {
     index k, i;
     index *rowptr, *colind;
-    real  *vals;
+    real  *vals, save;
     index p, q, nz;
     index *Ti, *Tj, *work;
     real  *Tx;
@@ -120,11 +120,11 @@ init_coo2crs(pcrs A, pccoo T)
     */
 
     /* Count entries per row */
-    for (k = 0 ; k < T->nonz ; k++) work[Ti[k]-INDEX_BASE]++ ;
+    for (k = 0 ; k < T->nonz ; ++k) ++work[Ti[k]-INDEX_BASE];
     /* Create col pointer */
-    cumsum(rowptr,work,T->numr);
+    (void) cumsum(rowptr,work,T->numr);
     /* Copy data from T to C */
-    for (k = 0 ; k < T->nonz ; k++){
+    for (k = 0 ; k < T->nonz ; ++k){
         colind[p = work[Ti[k]-INDEX_BASE]++] = Tj[k];
         vals[p] = Tx[k] ;
     }
@@ -133,13 +133,14 @@ init_coo2crs(pcrs A, pccoo T)
     * Remove duplicate entries
     */
 
-    for (k = 0 ; k < T->numc ; k++) work[k]=0;   /* col k yet not seen =
+    for (k = 0 ; k < T->numc ; ++k) work[k]=0;   /* col k yet not seen =
     */
     /* Loop over each row and check if A(i,j) is duplicate */
     nz = 0;
-    for (i = 0 ; i < T->numr ; i++){
+    for (i = 0 ; i < T->numr ; ++i){
         q = nz;                           /* Row i will start at q */
-        for (p = rowptr[i] ; p < rowptr[i+1] ; p++){
+
+        for (p = rowptr[i]; p < rowptr[i+1] ; ++p){
             k = colind[p]-INDEX_BASE ;      /* Entry A(i,j) */
             if (work[k] > q){
                 vals[work[k]-1] += vals[p] ;  /* A(i,j) is a duplicate */
@@ -161,15 +162,24 @@ init_coo2crs(pcrs A, pccoo T)
     */
 
     nz = 0;
-    for (i = 0 ; i < T->numr ; i++){
+    for (i = 0 ; i < T->numr ; ++i){
         p = rowptr[i];                    /* Get current location of row i =
         */
         rowptr[i] = nz;                   /* Record new location of row i =
         */
-        for ( ; p < rowptr [i+1] ; p++){
-            if (vals[p]!=0){
-            vals[nz] = vals[p];           /* Keep A(i,j) */
-            colind[nz++] = colind[p];
+        for ( ; p < rowptr [i+1] ; ++p) {
+            if (vals[p]!=(real) 0) {
+                vals[nz] = vals[p];           /* Keep A(i,j) */
+                colind[nz++] = colind[p];
+                if (i==colind[nz-1]-INDEX_BASE && nz!=rowptr[i]) {
+                    /* Swap */
+                    save             = vals[nz-1];
+                    vals[nz-1]       = vals[rowptr[i]];
+                    vals[rowptr[i]]  = save;
+
+                    colind[nz-1]      = colind[rowptr[i]];
+                    colind[rowptr[i]] = i+INDEX_BASE;
+                }
             }
         }
     }

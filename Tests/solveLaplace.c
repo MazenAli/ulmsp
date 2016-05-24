@@ -8,10 +8,15 @@
 #include <math.h>
 
 #include "settings.h"
+#include "realvector.h"
+#include "indexvector.h"
+#include "realmatrix.h"
+#include "indexmatrix.h"
 #include "mesh.h"
 #include "gecrsmv.h"
 #include "gecoomv.h"
 #include "cgcrs.h"
+#include "gscrs.h"
 
 #define ELAPSED(t0,t1) ((int) ((t1 - t0) / (double) CLOCKS_PER_SEC * 1000))
 
@@ -59,7 +64,7 @@ int
 main(int argc, char **argv)
 {
     int i, nItCG, nRef = 2;
-    long TIME[9];
+    long TIME[10];
 
     pcoo S = new_coo(1,1,1);
     pcrs A = new_crs(1,1,1);
@@ -78,7 +83,8 @@ main(int argc, char **argv)
     pindexmatrix bdrylist[2];
     pindexvector bdry2edgeslist[2];
     prealvector rhs;
-    prealvector sol;
+    prealvector solcg;
+    prealvector solpcg;
 
     /* Number of refinements */
     if (argc>1){
@@ -147,9 +153,11 @@ main(int argc, char **argv)
     write_indexvector("./Tests/Example1/Dirichlet2edges_fine.dat",bdry2edgeslist[0]);
     write_indexvector("./Tests/Example1/Neumann2edges_fine.dat",bdry2edgeslist[1]);
 
-    rhs = new_realvector(coordinates->cols);
-    sol = new_realvector(coordinates->cols);
-    fill_realvector(sol, 0.);
+    rhs    = new_realvector(coordinates->cols);
+    solcg  = new_realvector(coordinates->cols);
+    solpcg = new_realvector(coordinates->cols);
+    fill_realvector(solcg, 0.);
+    fill_realvector(solpcg, 0.);
     fill_realvector(rhs, 0.);
 
     TIME[2] = clock();
@@ -167,18 +175,27 @@ main(int argc, char **argv)
     TIME[5] = clock();
 
     buildRhs(coordinates, elements, bdrylist, material, f1, f2, g, rhs);
-    setDirichletData2Rhs(coordinates, fixedNodes, uD, sol);
+    setDirichletData2Rhs(coordinates, fixedNodes, uD, solcg);
+    setDirichletData2Rhs(coordinates, fixedNodes, uD, solpcg);
 
     TIME[6] = clock();
 
-    nItCG = cgcrs_constrains(A, sol, rhs, fixedNodes, 1e-6, coordinates->cols);
-    printf("No. iterations %i\n", nItCG);
+    nItCG = cgcrs_constrains(A, solcg, rhs, fixedNodes, 1e-6, coordinates->cols);
+
+    printf("No. iterations CG %i\n", nItCG);
 
     TIME[7] = clock();
 
-    write_realvector("./Tests/Example1/sol_fine.dat",sol);
+    nItCG = pcggscrs_constrains(A, solpcg, rhs, fixedNodes, 1e-6, 5,
+                                coordinates->cols);
+
+    printf("No. iterations PCG %i\n", nItCG);
 
     TIME[8] = clock();
+
+    write_realvector("./Tests/Example1/sol_fine.dat",solpcg);
+
+    TIME[9] = clock();
 
     printf("---------------------\n");
     printf("Time for refinement       = %i ms\n", ELAPSED(TIME[0],TIME[1]));
@@ -187,8 +204,9 @@ main(int argc, char **argv)
     printf("Time for COO -> CRS       = %i ms\n", ELAPSED(TIME[3],TIME[4]));
     printf("Time for fixedNodes       = %i ms\n", ELAPSED(TIME[4],TIME[5]));
     printf("Time for RHS              = %i ms\n", ELAPSED(TIME[5],TIME[6]));
-    printf("Time for solving          = %i ms\n", ELAPSED(TIME[6],TIME[7]));
-    printf("Time store solution       = %i ms\n\n", ELAPSED(TIME[7],TIME[8]));
+    printf("Time for solving CG       = %i ms\n", ELAPSED(TIME[6],TIME[7]));
+    printf("Time for solving PCG      = %i ms\n", ELAPSED(TIME[7],TIME[8]));
+    printf("Time store solution       = %i ms\n\n", ELAPSED(TIME[8],TIME[9]));
     printf("Degrees of elements / freedom %lu / %lu\n", elements->cols, coordinates->cols);
 
     printf("---------------------\n");
@@ -196,10 +214,10 @@ main(int argc, char **argv)
     del_coo(S);
     del_crs(A);
     del_realvector(rhs);
-    del_realvector(sol);
+    del_realvector(solcg);
+    del_realvector(solpcg);
     del_indexmatrix(edgeno);
     del_indexvector(fixedNodes);
-
 
     del_realmatrix(coordinates);
     del_indexmatrix(elements);

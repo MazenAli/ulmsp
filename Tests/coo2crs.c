@@ -9,6 +9,7 @@
 #include "coo.h"
 #include "crs.h"
 
+
 int
 main()
 {
@@ -55,7 +56,6 @@ main()
     (void) printf("COO matrix A=\n");
     print_coo(A);
 
-    B = new_coo2crs(A);
     (void) printf("CRS conversion->\n");
     print_crs(B);
 
@@ -71,10 +71,8 @@ main()
     (void) printf("COO matrix A=\n");
     print_coo(A);
 
-    B = new_coo2crs(A);
     (void) printf("CRS conversion->\n");
     print_crs(B);
-
 
     del_coo(A);
     del_crs(B);
