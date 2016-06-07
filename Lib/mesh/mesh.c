@@ -155,9 +155,9 @@ void prolongation(pcrealvector x,        /* in  */
   in = x->vals; out = y->vals; ptr = edgeno->vals;
 
   for (i=0; i<ndim; i++) out[i] = in[i];
-  for (i=0; i<edgeno->cols; i++){
-    out[ndim+i] = 0.5 * (in[ndim + ptr[2*i  ] - INDEX_BASE]
-                       + in[ndim + ptr[2*i+1] - INDEX_BASE]);
+  for (i=0; i<edgeno->cols; i++){									//edgeno->cols = "number of sons"
+    out[ndim+i] = 0.5 * (in[ ptr[2*i  ] - INDEX_BASE]
+                       + in[ ptr[2*i+1] - INDEX_BASE]);
   }
   return;
 }
@@ -171,10 +171,10 @@ void restriction(pcrealvector x,        /* in  */
   ndim = y->length;
   in = x->vals; out = y->vals; ptr = edgeno->vals;
 
-  for (i=0; i<ndim; ++i) out[i] = in[i];
-  for (i=0; i<edgeno->cols; ++i){
-    out[ndim + ptr[2*i  ]-INDEX_BASE] += 0.5*in[ndim+i];
-    out[ndim + ptr[2*i+1]-INDEX_BASE] += 0.5*in[ndim+i];
+  for (i=0; i<ndim; i++) out[i] = in[i];
+  for (i=0; i<edgeno->cols; i++){
+    out[ ptr[2*i  ]-INDEX_BASE] += 0.5*in[ndim+i];
+    out[ ptr[2*i+1]-INDEX_BASE] += 0.5*in[ndim+i];
   }
   return;
 }
@@ -379,6 +379,7 @@ void getFixed(const index     nCoord,     /* in       */
       }
     }
   }
+
   resize_indexvector(fixedNodes,cnt);
   nz = 0;
   for (j=0; j<nCoord; j++) {
@@ -386,9 +387,14 @@ void getFixed(const index     nCoord,     /* in       */
       fixedNodes->vals[nz++] = j+INDEX_BASE;
   }
 
+
   resize_indexvector(fixedNodes,nz);
-  if (!flag) free(flag);
-  return;
+  if (!flag){ 
+	free(flag);
+  	return;
+	}
+
+	free(flag);
 }
 
 void setDirichletData2Rhs(prealmatrix coordinates,
@@ -513,44 +519,37 @@ int create_hierarchy(const int       nLevel,          /* in       */
   pcoo S = new_coo(1,1,1);
   pindexmatrix edgeno;
 
-  f2s = (pindexmatrix*) malloc((nLevel-1)*sizeof(pindexmatrix));
-  fixed = (pindexvector*) malloc(nLevel*sizeof(pindexvector));
-  edgeno = new_indexmatrix(0,0);
-
-  if (!f2s || !fixed){
-     free(f2s); free(fixed);
-     return 0;
-  }
+  edgeno = new_indexmatrix(1,1);
 
   /* Store fixed for coarsest mesh*/
-  getFixed(nBdry, bdrytyp, bdrylist, fixed[nLevel-1]);
+  fixed[nLevel-1] = new_indexvector(0);
+  getFixed(coordinates->cols, bdrytyp, bdrylist, fixed[nLevel-1]);
+  
   /* Refine mesh (nLevel-1) times */
   for (i=nLevel-2; i>=0; i--){  
     refine_uniform(coordinates, elements, material,
                    elements2edges, edgeno, bdrylist,
                    bdry2edgeslist, nBdry);
-    getFixed(nBdry, bdrytyp, bdrylist, fixed[i]);
-    f2s[i] = edgeno;
+ 	fixed[i] = new_indexvector(1);
+    getFixed(coordinates->cols, bdrytyp, bdrylist, fixed[i]);
+    f2s[i] = new_indexmatrix(0,0);
+    copy_indexmatrix(f2s[i],edgeno);
   }
 
-  if (!(A==NULL)){
-    A = (pcrs*) malloc(nLevel*sizeof(pcrs));
-
-    if (!A || !fixed){
-     free(A); free(fixed);
-     return 0;
-    }
 
     /* Build stiffness matrix for finest mesh */
     buildStiffness(coordinates, elements, S);
     A[0] = new_crs(1,1,1);
     init_coo2crs(A[0], S); 
-
+	del_coo(S);
+	
     /* Build stiffness matrix for coarser meshes */
     for (i=1; i<nLevel; i++){
+	  A[i] = new_crs(1,1,1);
       buildStiffnessByInterpolation(A[i-1],A[i],f2s[i-1]);
     }
-  }
+  
+	
   del_indexmatrix(edgeno);
   return 1;
 }
