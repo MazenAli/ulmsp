@@ -21,6 +21,7 @@ ULMSP_SOLVERS= \
 	Lib/solvers/gausscrs.c \
 	Lib/solvers/gscrs.c \
 	Lib/solvers/precs.c \
+	Lib/solvers/multigrid.c \
 
 ULMSP_SETTINGS= \
 	Lib/settings.c
@@ -55,6 +56,7 @@ SOURCES_stable := \
 	Tests/refinetria.c \
 	Tests/solveLaplace.c \
 	Tests/solveLaplaceL.c \
+	Tests/solveLaplace_multigrid.c \
 
 SOURCES_tests = $(SOURCES_stable) \
 
