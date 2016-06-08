@@ -18,3 +18,4 @@ Tests/setup_realvector
 Tests/solveLaplace
 Tests/solveLaplaceL
 Tests/testSolveGauss
+Tests/solveLaplace_multigrid

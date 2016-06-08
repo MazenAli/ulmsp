@@ -15,8 +15,8 @@
  * Diagonal (Jacobi).
  */
 void
-diagcrs(pccrs A,
-        prealvector x,
+diagcrs(pccrs        A,
+        prealvector  x,
         pcrealvector b);
 
 /*!
@@ -24,9 +24,9 @@ diagcrs(pccrs A,
  * marked in fixedMask by 1.
  */
 void
-diagcrs_constrains(pccrs A,
-                   prealvector x,
-                   pcrealvector b,
+diagcrs_constrains(pccrs         A,
+                   prealvector   x,
+                   pcrealvector  b,
                    pcindexvector fixedMask);
 
 /*!
@@ -34,9 +34,9 @@ diagcrs_constrains(pccrs A,
  * marked in fixedMask by 1.
  */
 void
-frwgscrs_constrains(pccrs A,
-                    prealvector x,
-                    pcrealvector b,
+frwgscrs_constrains(pccrs         A,
+                    prealvector   x,
+                    pcrealvector  b,
                     pcindexvector fixedMask);
 
 /*!
@@ -44,19 +44,19 @@ frwgscrs_constrains(pccrs A,
  * marked in fixedMask by 1.
  */
 void
-bkwgscrs_constrains(pccrs A,
-                   prealvector x,
-                   pcrealvector b,
-                   pcindexvector fixedMask);
+bkwgscrs_constrains(pccrs         A,
+                    prealvector   x,
+                    pcrealvector  b,
+                    pcindexvector fixedMask);
 
 /*!
  * Symmetric GS. Performs solve on nodes not
  * marked in fixedMask by 1.
  */
 void
-symgscrs_constrains(pccrs A,
-                   prealvector x,
-                   pcrealvector b,
-                   pcindexvector fixedMask);
+symgscrs_constrains(pccrs         A,
+                    prealvector   x,
+                    pcrealvector  b,
+                    pcindexvector fixedMask);
 
 #endif

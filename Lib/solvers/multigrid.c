@@ -20,10 +20,10 @@ mgcrs(	pcrs *A,                   /* in    */
 		pindexmatrix *f2s,	 		/* in     */
 		real tol)               	/* in     */
 {
-	index nItCG, k;
+	index k;
 	
 	if( (Level+1) == nLevel-1){ /*If coarsest grid is achieved -> solve exactly */
-		nItCG = cgcrs(A[Level], x, b, 1e-6, x->length);
+		(void) cgcrs(A[Level], x, b, 1e-6, x->length);
 	}else{
     	
 		prealvector r;
@@ -78,10 +78,10 @@ mgcrs_constrains(pcrs *A,                    /* in    */
 				 real tol)                   /* in     */
 {
     
-	index nItCG, k, i;
+	index k, i;
 	
 	if( (Level+1) == nLevel-1){ /*If coarsest grid is achieved -> solve exactly */
-		nItCG = cgcrs_constrains(A[Level], x, b, fixedNodes[Level], 1e-6, x->length);
+		(void) cgcrs_constrains(A[Level], x, b, fixedNodes[Level], 1e-6, x->length);
 	}else{
     	
 		prealvector r;

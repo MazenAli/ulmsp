@@ -16,7 +16,6 @@
 
 /*!
  * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
- * Returns number of iterations.
  */
 void
 mgcrs(	pcrs *A,                   /* in    */
@@ -35,7 +34,6 @@ mgcrs(	pcrs *A,                   /* in    */
  * Solve \f$ Ax=b \f$ with \f$ A \f$ in CRS format.
  * Iterations are not performed on fixedNodes corresponding to
  * dirichlet boundary conditions.
- * Returns number of iterations.
  */
 void
 mgcrs_constrains(pcrs *A,                   /* in    */

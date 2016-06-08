@@ -6,8 +6,8 @@
 #include "precs.h"
 
 void
-diagcrs(pccrs A,
-        prealvector x,
+diagcrs(pccrs        A,
+        prealvector  x,
         pcrealvector b)
 {
     index i;
@@ -24,9 +24,9 @@ diagcrs(pccrs A,
 
 
 void
-diagcrs_constrains(pccrs A,
-                   prealvector x,
-                   pcrealvector b,
+diagcrs_constrains(pccrs         A,
+                   prealvector   x,
+                   pcrealvector  b,
                    pcindexvector fixedMask)
 {
     index i;
@@ -46,9 +46,9 @@ diagcrs_constrains(pccrs A,
 
 
 void
-frwgscrs_constrains(pccrs A,
-                    prealvector x,
-                    pcrealvector b,
+frwgscrs_constrains(pccrs         A,
+                    prealvector   x,
+                    pcrealvector  b,
                     pcindexvector fixedMask)
 {
     index i, j;
@@ -76,9 +76,9 @@ frwgscrs_constrains(pccrs A,
 
 
 void
-bkwgscrs_constrains(pccrs A,
-                    prealvector x,
-                    pcrealvector b,
+bkwgscrs_constrains(pccrs         A,
+                    prealvector   x,
+                    pcrealvector  b,
                     pcindexvector fixedMask)
 {
     index j;
@@ -107,9 +107,9 @@ bkwgscrs_constrains(pccrs A,
 
 
 void
-symgscrs_constrains(pccrs A,
-                    prealvector x,
-                    pcrealvector b,
+symgscrs_constrains(pccrs         A,
+                    prealvector   x,
+                    pcrealvector  b,
                     pcindexvector fixedMask)
 {
     index i;
